@@ -2,15 +2,42 @@
 
 import {useEffect, useState} from 'react';
 
-export default function Card({image, allFlipped }: { image: number; allFlipped: boolean }) {
-    const [flipped, setFlipped] = useState(allFlipped);
+export default function Card({
+    index,
+    image, 
+    flipped,
+    allFlipped,
+    matched,
+    onFlip,
+ }: { 
+    index: number;
+    image: number; 
+    flipped: boolean;
+    allFlipped: boolean;
+    matched: boolean;
+    onFlip: () => void;
+ }) {
+    // State to keep track of whether the card is flipped
+    const [isFlipped, setIsFlipped] = useState(flipped);
 
+    // Update isFlipped when the card is flipped
     useEffect(() => {
-        setFlipped(allFlipped);
+        setIsFlipped(flipped);
+    }, [flipped]);
+
+    // Handle initial flip
+    useEffect(() => {
+        if(allFlipped){
+            setIsFlipped(true);
+        }
     }, [allFlipped]);
 
     const handleFlip = () => {
-        setFlipped(!flipped);
+        console.log('isFlipped', isFlipped, 'matched', matched);
+        if(isFlipped && !matched){
+            console.log('Card flipped');
+            onFlip();
+        }
     };
 
     return (
@@ -20,7 +47,7 @@ export default function Card({image, allFlipped }: { image: number; allFlipped: 
         >
             <div
                 className={`absolute w-full h-full rounded-lg shadow-lg transform transition-transform duration-500 ${
-                flipped ? 'rotate-y-180' : ''
+                isFlipped ? 'rotate-y-180' : ''
                 }`}
                 style={{ transformStyle: 'preserve-3d' }}
             >

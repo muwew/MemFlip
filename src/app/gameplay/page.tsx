@@ -5,11 +5,13 @@ import { generateGrid } from './generateGrid';
 import { initialFlip } from './initialFlip';
 import ExitButton from './exit-button';
 import Card from './card';
-import { init } from 'next/dist/compiled/webpack/webpack';
+import { CardState, handleCardFlip } from './flipLogic';
+// Removed unused import
 
 export default function GameplayPage() {
-  const numPairs = 10; // Number of pairs of cards
+  const numPairs = 5; // Number of pairs of cards
   const revealTime = 2000; // Time to reveal all cards at the beginning
+  const [matchedPairs, setMatchedPairs] = useState(0); // Initially all cards not matched
 
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
@@ -17,11 +19,30 @@ export default function GameplayPage() {
     setGridItems(generateGrid(numPairs));
   }, [numPairs]);
 
+  // State for cards and gameplay
+  // Removed unused state variable
+  const [cardStates, setCardStates] = useState<CardState[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
+  // Removed unused state variable
+
+  // Initialize card states
+  useEffect(() => {
+    setCardStates(gridItems.map(() => ({flipped: false, matched: false})));
+  }, [gridItems]);
+
   // Start with cards revealed
   const[flipAll, setFlipAll] = useState(false);
-
   // Call initialFlip when the component mounts
   initialFlip(revealTime, setFlipAll);
+
+  useEffect(() => {
+    if(flipAll){
+      setCardStates((prevCardStates) =>
+        prevCardStates.map((card) => ({...card, flipped: true}))
+      );
+    }
+  }, [flipAll]);
+
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -47,7 +68,24 @@ export default function GameplayPage() {
         gridTemplateRows: 'repeat(autofill, minmax(60px, 1fr))',
       }}>
         {gridItems.map((image, index) => (
-          <Card key={index} image={image} allFlipped={flipAll}/>
+          <Card 
+          key={index} 
+          index={index}
+          image={image}
+          flipped={cardStates[index]?.flipped || false}
+          matched={cardStates[index]?.matched || false}
+          allFlipped={flipAll}
+          onFlip={() => handleCardFlip(
+            index,
+            image,
+            flippedCards,
+            setFlippedCards,
+            cardStates,
+            setCardStates,
+            matchedPairs,
+            setMatchedPairs
+          )}
+          />
         ))}
       </main>
     </div>
