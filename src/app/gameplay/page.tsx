@@ -41,6 +41,13 @@ export default function GameplayPage() {
     }
   }, [flipAll]);
 
+  // End game condition
+  useEffect(() => {
+    if(matchedPairs === numPairs){
+      window.alert('Congratulations! You matched all ${numPairs} pairs!');
+    }
+  }, [matchedPairs, numPairs]);
+
 
   return (
     <div className="min-h-screen bg-gray-100">
