@@ -8,6 +8,7 @@ export default function Card({
     flipped,
     allFlipped,
     matched,
+    disabled,
     onFlip,
  }: { 
     index: number;
@@ -15,6 +16,7 @@ export default function Card({
     flipped: boolean;
     allFlipped: boolean;
     matched: boolean;
+    disabled: boolean;
     onFlip: () => void;
  }) {
     // State to keep track of whether the card is flipped
@@ -34,7 +36,7 @@ export default function Card({
 
     const handleFlip = () => {
         console.log('isFlipped', isFlipped, 'matched', matched);
-        if(isFlipped && !matched){
+        if(isFlipped && !matched && !disabled){
             console.log('Card flipped');
             onFlip();
         }
