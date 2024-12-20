@@ -16,19 +16,16 @@ export default function GameplayPage() {
 
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
+  const [cardStates, setCardStates] = useState<CardState[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
+
   useEffect(() => {
     setGridItems(generateGrid(numPairs));
   }, [numPairs]);
 
-  // State for cards and gameplay
-  // Removed unused state variable
-  const [cardStates, setCardStates] = useState<CardState[]>([]);
-  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
-  // Removed unused state variable
-
   // Initialize card states
   useEffect(() => {
-    setCardStates(gridItems.map(() => ({flipped: false, matched: false})));
+    setCardStates(gridItems.map(() => ({flipped: false, matched: false, vibrating: false})));
   }, [gridItems]);
 
   // Start with cards revealed
@@ -73,8 +70,7 @@ export default function GameplayPage() {
           key={index} 
           index={index}
           image={image}
-          flipped={cardStates[index]?.flipped || false}
-          matched={cardStates[index]?.matched || false}
+          {...cardStates[index]}
           allFlipped={flipAll}
           disabled={disabled}
           onFlip={() => handleCardFlip(
@@ -87,7 +83,7 @@ export default function GameplayPage() {
             matchedPairs,
             setMatchedPairs,
             disabled,
-            setDisabled
+            setDisabled,
           )}
           />
         ))}

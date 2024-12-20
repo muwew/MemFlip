@@ -9,6 +9,7 @@ export default function Card({
     allFlipped,
     matched,
     disabled,
+    vibrating,
     onFlip,
  }: { 
     index: number;
@@ -17,15 +18,23 @@ export default function Card({
     allFlipped: boolean;
     matched: boolean;
     disabled: boolean;
+    vibrating: boolean;
     onFlip: () => void;
  }) {
     // State to keep track of whether the card is flipped
     const [isFlipped, setIsFlipped] = useState(flipped);
+    // State to keep track of whether the card is vibrating
+    const [isVibrating, setIsVibrating] = useState(vibrating);
 
     // Update isFlipped when the card is flipped
     useEffect(() => {
         setIsFlipped(flipped);
     }, [flipped]);
+
+    // Update isVibrating when the card is vibrating
+    useEffect(() => {
+        setIsVibrating(vibrating);
+    }, [vibrating]);
 
     // Handle initial flip
     useEffect(() => {
@@ -44,7 +53,8 @@ export default function Card({
 
     return (
         <div
-          className="relative w-60 h-60 perspective"
+        className={`relative w-60 h-60 perspective 
+            ${vibrating ? 'animate-vibrate' : ''}`}
           onClick={handleFlip}
         >
             <div

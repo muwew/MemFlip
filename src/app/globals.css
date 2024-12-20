@@ -32,3 +32,15 @@ body {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+@keyframes vibrate {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-vibrate {
+  animation: vibrate 0.3s ease-in-out;
+}
