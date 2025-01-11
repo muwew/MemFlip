@@ -1,4 +1,5 @@
 export interface CardState{
+    vibrating: boolean;
     flipped: boolean;
     matched: boolean;
 }
@@ -11,7 +12,9 @@ export const handleCardFlip =(
     cardStates: CardState[],
     setCardStates: React.Dispatch<React.SetStateAction<CardState[]>>,
     matchedPairs: number,
-    setMatchedPairs: React.Dispatch<React.SetStateAction<number>>
+    setMatchedPairs: React.Dispatch<React.SetStateAction<number>>,
+    disabled: boolean,
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
     const newCardStates = [...cardStates];
     newCardStates[index].flipped = false; // flip the card
@@ -41,12 +44,20 @@ export const handleCardFlip =(
 
         // if the two flipped cards do not match
         else{
+            setDisabled(true); // disable all cards
+            newCardStates[firstCard.index].vibrating = true;
+            newCardStates[secondCard.index].vibrating = true;
+            setCardStates(newCardStates);
             // flip them back after a delay (1000ms)
             setTimeout(() => {
                 newCardStates[firstCard.index].flipped = true;
                 newCardStates[secondCard.index].flipped = true;
 
+                newCardStates[firstCard.index].vibrating = false;
+                newCardStates[secondCard.index].vibrating = false;
+
                 setCardStates(newCardStates);
+                setDisabled(false); // enable all cards
             }, 1000);
         }
 
