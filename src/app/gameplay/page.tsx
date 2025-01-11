@@ -6,13 +6,15 @@ import { initialFlip } from './initialFlip';
 import ExitButton from './exit-button';
 import Card from './card';
 import { CardState, handleCardFlip } from './flipLogic';
-// Removed unused import
+import Timer from './timer';
 
 export default function GameplayPage() {
   const numPairs = 5; // Number of pairs of cards
   const revealTime = 2000; // Time to reveal all cards at the beginning
+  const timeLimit = 600; // Total time in seconds
   const [matchedPairs, setMatchedPairs] = useState(0); // Initially all cards not matched
   const [disabled, setDisabled] = useState(false); // Initially all cards not disabled
+  const [isGameOver, setIsGameOver] = useState(false); // Initially game not over
 
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
@@ -42,11 +44,26 @@ export default function GameplayPage() {
   }, [flipAll]);
 
   // End game condition
+  const checkEndGame = (reason: string) => {
+    setIsGameOver(true);
+    if(reason === 'time'){
+      window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
+    } else if (reason === 'win'){
+      window.alert(`Congratulations! You matched all pairs in ${timeLimit} seconds.`);
+    }
+  };
+
   useEffect(() => {
     if(matchedPairs === numPairs){
-      window.alert('Congratulations! You matched all ${numPairs} pairs!');
+      checkEndGame('win');
     }
-  }, [matchedPairs, numPairs]);
+  }, [matchedPairs, numPairs,isGameOver]);
+
+  const handleTimeUp = () => {
+    if(!isGameOver){
+      checkEndGame('time');
+    }
+  };
 
 
   return (
@@ -62,9 +79,9 @@ export default function GameplayPage() {
       </header>
 
       {/* Timer */}
-      <section className="bg-red-500 h-2 my-4">
-        <div id="timer-bar" className="bg-green-500 h-full w-1/2"></div>
-      </section>
+      {!isGameOver && (
+        <Timer timeLimit={timeLimit} onTimeUp={handleTimeUp} isGameOver={isGameOver} />
+      )}
 
       {/* Gameplay Grid */}
       <main className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 p-10 place-content-center"
