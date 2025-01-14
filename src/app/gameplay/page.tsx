@@ -9,9 +9,9 @@ import { CardState, handleCardFlip } from './flipLogic';
 import Timer from './timer';
 
 export default function GameplayPage() {
-  const numPairs = 5; // Number of pairs of cards
+  const numPairs = 6; // Number of pairs of cards
   const revealTime = 2000; // Time to reveal all cards at the beginning
-  const timeLimit = 600; // Total time in seconds
+  const timeLimit = 30; // Total time in seconds
   const [matchedPairs, setMatchedPairs] = useState(0); // Initially all cards not matched
   const [disabled, setDisabled] = useState(false); // Initially all cards not disabled
   const [isGameOver, setIsGameOver] = useState(false); // Initially game not over
