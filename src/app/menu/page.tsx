@@ -15,21 +15,21 @@ export default function MenuPage() {
       <h1 className="text-4xl font-bold mb-6 text-blue-800">Welcome to MemFlip!</h1>
       <div className="space-y-4">
         <button
-          onClick={() => handleChoice('Choice 1')}
+          onClick={() => handleChoice('Choice1')}
           className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700"
         >
           Choice 1
         </button>
 
         <button
-          onClick={() => handleChoice('Choice 2')}
+          onClick={() => handleChoice('Choice2')}
           className="px-6 py-3 bg-yellow-600 text-white rounded-lg shadow-lg hover:bg-yellow-700"
         >
           Choice 2
         </button>
 
         <button
-          onClick={() => handleChoice('Choice 3')}
+          onClick={() => handleChoice('Choice3')}
           className="px-6 py-3 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700"
         >
           Choice 3
