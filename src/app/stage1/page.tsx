@@ -36,7 +36,7 @@ export default function Stage1Page() {
         ],
     };
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [nextPhase, setNextPhase] = useState(true); // Show next phase modal
+    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
 
@@ -86,6 +86,7 @@ export default function Stage1Page() {
                     ))}
                 </div>
             )}
+
             {memorizing ? (
                 <button
                     onClick={handleContinue}

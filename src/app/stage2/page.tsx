@@ -50,6 +50,7 @@ export default function Stage2Page() {
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [showImage, setShowImage] = useState(false); // Show the image
     const [showQuestions, setShowQuestions] = useState(false); // Show the questions
+    const [showInstructions, setShowInstructions] = useState(false) // Show instructions for Stage 3
     const [answers, setAnswers] = useState<string[]>(Array(selectedQuestions.length).fill('')); // Store answers
 
     // Handle "Continue" button click in the explanation modal
@@ -73,7 +74,9 @@ export default function Stage2Page() {
     const handleSubmit = () => {
         const confirmed = confirm('Are you ready to continue?');
         if (confirmed) {
-            router.push(`/gameplay?choice=${choice}`); // Navigate to Stage 3
+            setShowQuestions(false);
+            setShowInstructions(true);
+            // router.push(`/gameplay?choice=${choice}`); // Navigate to Stage 3
         }
     };
 
@@ -129,6 +132,25 @@ export default function Stage2Page() {
                     >
                         Submit
                     </button>
+                </div>
+            )}
+
+            {/* Instruction Modal for Stage 3 */}
+            {showInstructions && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
+                        <p className="text-gray-700 mb-6">
+                            Cards consisting of images you've memorised will be shown for a set amount of time, before being flipped over.
+                            You have to match as many pairs as possible before time runs out.
+                        </p>
+                        <button
+                            onClick={() => router.push(`/gameplay?choice=${choice}`)}
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
+                        >
+                            Continue
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
