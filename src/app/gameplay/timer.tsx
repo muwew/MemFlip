@@ -6,9 +6,10 @@ interface TimerProps {
     timeLimit: number; // Total time in seconds
     onTimeUp: () => void; // Callback when the timer ends
     isGameOver: boolean; // Flag to stop the timer if the game ends early
+    onTimeUpdate: (timeLeft: number) => void; // Callback to update timeLeft
 }
 
-export default function Timer({ timeLimit, onTimeUp, isGameOver }: TimerProps) {
+export default function Timer({ timeLimit, onTimeUp, isGameOver, onTimeUpdate }: TimerProps) {
     const [timeLeft, setTimeLeft] = useState(timeLimit); // Remaining time
     const [width, setWidth] = useState(100); // Timer bar width (%)
 
@@ -24,7 +25,9 @@ export default function Timer({ timeLimit, onTimeUp, isGameOver }: TimerProps) {
                         onTimeUp(); // Trigger time-up event
                         return 0;
                     }
-                    return prevTime - 1;
+                    const newTime = prevTime - 1;
+                    onTimeUpdate(newTime)
+                    return newTime;
                 });
             }, 1000);
 
@@ -32,7 +35,7 @@ export default function Timer({ timeLimit, onTimeUp, isGameOver }: TimerProps) {
         }, 1000);
 
         return () => clearTimeout(timeoutId); // Cleanup on unmount
-    }, [isGameOver, onTimeUp]);
+    }, [isGameOver, onTimeUp, onTimeUpdate]);
 
     useEffect(() => {
         // Update the width of the timer bar

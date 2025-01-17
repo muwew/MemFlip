@@ -17,6 +17,7 @@ export default function GameplayPage() {
   const [matchedPairs, setMatchedPairs] = useState(0); // Initially all cards not matched
   const [disabled, setDisabled] = useState(false); // Initially all cards not disabled
   const [isGameOver, setIsGameOver] = useState(false); // Initially game not over
+  const [timeLeft, setTimeLeft] = useState(timeLimit); // Track remaining time
 
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
@@ -83,7 +84,7 @@ export default function GameplayPage() {
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
-      window.alert(`Congratulations! You matched all pairs in ${timeLimit} seconds.`);
+      window.alert(`Congratulations! You matched all pairs in ${timeLeft} seconds.`);
     }
   };
 
@@ -97,6 +98,10 @@ export default function GameplayPage() {
     if(!isGameOver){
       checkEndGame('time');
     }
+  };
+
+  const handleTimeUpdate = (remainingTime: number) => {
+    setTimeLeft(remainingTime); // Update `timeLeft` in parent state
   };
 
 
@@ -114,7 +119,11 @@ export default function GameplayPage() {
 
       {/* Timer */}
       {!isGameOver && (
-        <Timer timeLimit={timeLimit} onTimeUp={handleTimeUp} isGameOver={isGameOver} />
+        <Timer timeLimit={timeLimit} 
+        onTimeUp={handleTimeUp} 
+        isGameOver={isGameOver} 
+        onTimeUpdate={handleTimeUpdate}
+        />
       )}
 
       {/* Gameplay Grid */}
