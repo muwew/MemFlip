@@ -13,7 +13,7 @@ export default function Card({
     onFlip,
  }: { 
     index: number;
-    image: number; 
+    image: string; 
     flipped: boolean;
     allFlipped: boolean;
     matched: boolean;
@@ -68,7 +68,7 @@ export default function Card({
                 className="absolute w-full h-full bg-white flex justify-center items-center rounded-lg backface-hidden"
                 style={{ transform: 'rotateY(0deg)' }}
                 >
-                <img src={`/images/${image}.png`} alt={`Card ${image}`} className="w-40 h-40" />
+                <img src={`${image}`} alt={`Card ${image}`} className="w-40 h-40" />
                 </div>
         
                 {/* Back Side */}

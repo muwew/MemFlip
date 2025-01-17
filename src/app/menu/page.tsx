@@ -35,11 +35,11 @@ export default function MenuPage() {
           Choice 3
         </button>
 
-        <Link href="/gameplay">
+        {/* <Link href="/gameplay">
           <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700">
             Start Game
           </button>
-        </Link>
+        </Link> */}
         <button className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400">
           Exit
         </button>

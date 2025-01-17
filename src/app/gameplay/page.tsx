@@ -8,6 +8,7 @@ import Card from './card';
 import { CardState, handleCardFlip } from './flipLogic';
 import { Dispatch, SetStateAction } from 'react';
 import Timer from './timer';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function GameplayPage() {
   const numPairs = 6; // Number of pairs of cards
@@ -20,7 +21,39 @@ export default function GameplayPage() {
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
   const [cardStates, setCardStates] = useState<CardState[]>([]);
-  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{index: number, image: string}[]>([]);
+
+  const images = {
+    Choice1: [
+        { src: '/images/choice1/c1.png', caption: 'Tonga' },
+        { src: '/images/choice1/c2.png', caption: 'Somalia' },
+        { src: '/images/choice1/c3.png', caption: 'Bulgaria' },
+        { src: '/images/choice1/c4.png', caption: 'Vietnam' },
+        { src: '/images/choice1/c5.png', caption: 'Madagascar' },
+        { src: '/images/choice1/c6.png', caption: 'Canada' },
+    ],
+    Choice2: [
+        { src: '/images/choice2/c1.png', caption: 'Marill' },
+        { src: '/images/choice2/c2.png', caption: 'Charizard' },
+        { src: '/images/choice2/c3.png', caption: 'Bellsprout' },
+        { src: '/images/choice2/c4.png', caption: 'Skuntank' },
+        { src: '/images/choice2/c5.png', caption: 'Turtonator' },
+        { src: '/images/choice2/c6.png', caption: 'Glalie' },
+    ],
+
+    Choice3: [
+        { src: '/images/choice3/c1.png', caption: 'Architect' },
+        { src: '/images/choice3/c2.png', caption: 'Advocate' },
+        { src: '/images/choice3/c3.png', caption: 'Consul' },
+        { src: '/images/choice3/c4.png', caption: 'Entertainer' },
+        { src: '/images/choice3/c5.png', caption: 'Mediator' },
+        { src: '/images/choice3/c6.png', caption: 'Logistician' },
+    ],
+  };
+  const searchParams = useSearchParams();
+  const choice = searchParams.get('choice'); // Get the selected choice from query params
+  const choiceImages = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1']; 
+
 
   useEffect(() => {
     setGridItems(generateGrid(numPairs));
@@ -90,28 +123,41 @@ export default function GameplayPage() {
         gridTemplateColumns: "repeat(7, minmax(60px, 1fr))",
         gridTemplateRows: 'repeat(autofill, minmax(60px, 1fr))',
       }}>
-        {gridItems.map((image, index) => (
-          <Card 
-          key={index} 
-          index={index}
-          image={image}
-          {...cardStates[index]}
-          allFlipped={flipAll}
-          disabled={disabled}
-          onFlip={() => handleCardFlip(
-            index,
-            image,
-            flippedCards,
-            setFlippedCards,
-            cardStates,
-            setCardStates,
-            matchedPairs,
-            setMatchedPairs,
-            disabled,
-            setDisabled,
-          )}
+        {gridItems.map((item, index) => {
+        const imageIndex = item - 1; // Convert one-based to zero-based index
+        const choiceImage = choiceImages[imageIndex]; // Get the corresponding image object
+
+        // Defensive check to avoid accessing undefined images
+        if (!choiceImage) {
+          console.error(`Image not found for grid item: ${item}`);
+          return null;
+        }
+
+        return (
+          <Card
+            key={index}
+            index={index}
+            image={choiceImage.src}
+            {...cardStates[index]}
+            allFlipped={flipAll}
+            disabled={disabled}
+            onFlip={() =>
+              handleCardFlip(
+                index,
+                item, // Pass the actual grid item (not index)
+                flippedCards,
+                setFlippedCards,
+                cardStates,
+                setCardStates,
+                matchedPairs,
+                setMatchedPairs,
+                disabled,
+                setDisabled,
+              )
+            }
           />
-        ))}
+        );
+      })}
       </main>
     </div>
   );

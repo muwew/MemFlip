@@ -35,7 +35,8 @@ export default function Stage1Page() {
             { src: '/images/choice3/c6.png', caption: 'Logistician' },
         ],
     };
-
+    const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
+    const [nextPhase, setNextPhase] = useState(true); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
 
@@ -44,8 +45,32 @@ export default function Stage1Page() {
         if (confirmed) setMemorizing(false); // Proceed to the answering phase
     };
 
+    const handleContinue2 = () => {
+        setShowExplanation(false);
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+            {/* Explanation Modal */}
+            {showExplanation && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
+                        <p className="text-gray-700 mb-6">
+                            Images along with their names will be shown, and it is your task to memorise them. 
+                            Once memorised, you'll have to use the memorised information to answer questions. 
+                        </p>
+                        <button
+                            onClick={handleContinue2}
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
+                        >
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            )}
+
+
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 1: Memorize</h1>
             {memorizing && (
                 <div className="grid grid-cols-3 gap-10 mb-10">
