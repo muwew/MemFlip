@@ -6,7 +6,7 @@ interface TimerProps {
     timeLimit: number; // Total time in seconds
     onTimeUp: () => void; // Callback when the timer ends
     isGameOver: boolean; // Flag to stop the timer if the game ends early
-    onTimeUpdate: (timeLeft: number) => void; // Callback to update timeLeft
+    onTimeUpdate: (remainingTime: number) => void; // Callback to update timeLeft
 }
 
 export default function Timer({ timeLimit, onTimeUp, isGameOver, onTimeUpdate }: TimerProps) {

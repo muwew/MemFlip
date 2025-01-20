@@ -37,7 +37,7 @@ export const handleCardFlip =(
             const updatePairs = matchedPairs + 1;
             setMatchedPairs((prev) => {
                 const updatedMatchedPairs = prev + 1;
-                console.log(`Matched pairs: ${updatedMatchedPairs}`);
+                // console.log(`Matched pairs: ${updatedMatchedPairs}`);
                 return updatedMatchedPairs;
             });
         }

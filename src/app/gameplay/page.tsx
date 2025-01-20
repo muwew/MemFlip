@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect } from 'react';
+import {useState, useEffect, useRef } from 'react';
 import { generateGrid } from './generateGrid';
 import { initialFlip } from './initialFlip';
 import ExitButton from './exit-button';
@@ -9,6 +9,8 @@ import { CardState, handleCardFlip } from './flipLogic';
 import { Dispatch, SetStateAction } from 'react';
 import Timer from './timer';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { match } from 'assert';
+import { matchesMiddleware } from 'next/dist/shared/lib/router/router';
 
 export default function GameplayPage() {
   const numPairs = 6; // Number of pairs of cards
@@ -22,7 +24,7 @@ export default function GameplayPage() {
   // Generate grid only once when the component mounts
   const [gridItems, setGridItems] = useState<number[]>([]);
   const [cardStates, setCardStates] = useState<CardState[]>([]);
-  const [flippedCards, setFlippedCards] = useState<{index: number, image: string}[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
 
   const images = {
     Choice1: [
@@ -78,25 +80,31 @@ export default function GameplayPage() {
     }
   }, [flipAll]);
 
+  const matchedPairsRef = useRef(matchedPairs);
+  useEffect(() => {
+    matchedPairsRef.current = matchedPairs;
+  }, [matchedPairs]);
+
   // End game condition
-  const checkEndGame = (reason: string) => {
+  const checkEndGame = (reason: string, matchedPairs :number) => {
     setIsGameOver(true);
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
-      window.alert(`Congratulations! You matched all pairs in ${timeLeft} seconds.`);
+      window.alert(`Congratulations! You matched all pairs in ${timeLimit-timeLeft} seconds.`);
     }
   };
 
   useEffect(() => {
     if(matchedPairs === numPairs){
-      checkEndGame('win');
+      checkEndGame('win', matchedPairs);
     }
   }, [matchedPairs, numPairs,isGameOver]);
 
   const handleTimeUp = () => {
     if(!isGameOver){
-      checkEndGame('time');
+      console.log("Current matches: ", matchedPairsRef.current)
+      checkEndGame('time', matchedPairsRef.current);
     }
   };
 
@@ -113,7 +121,7 @@ export default function GameplayPage() {
           <img src="https://via.placeholder.com/50" alt="MemFlip" className="rounded-full" />
           <h1 className="ml-4 text-xl font-bold text-gray-700">MemFlip</h1>
         </div>
-        <div className="text-xl font-semibold text-gray-700">Score: 0</div> 
+        <div className="text-xl font-semibold text-gray-700">Score: {matchedPairs}</div> 
         <ExitButton />
       </header>
 
