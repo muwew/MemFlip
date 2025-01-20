@@ -1,84 +1,53 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function Stage2Page() {
+export default function Stage1Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
 
-    // Time in seconds to display the image
-    const showTime = 5;
-
-    // Images for Stage 2 based on choice
     const images = {
-        Choice1: '/images/choice1/s1.jpg',
-        Choice2: '/images/choice2/s2.jpg',
-        Choice3: '/images/choice3/s3.png',
-    };
-
-    // Questions for Stage 2 based on choice
-    const questions = {
         Choice1: [
-            'What time of day is it?',
-            'What country flags shown in stage 1 are shown here?',
-            'What do you think the people are doing?',
-            'Are there any people of authority? If yes, what occupations were they?',
-            'Where did the image take place?',
-            'How many people were facing away from the viewer’s perspective?',
+            { src: '/images/choice1/c1.png', caption: 'Tonga' },
+            { src: '/images/choice1/c2.png', caption: 'Somalia' },
+            { src: '/images/choice1/c3.png', caption: 'Bulgaria' },
+            { src: '/images/choice1/c4.png', caption: 'Vietnam' },
+            { src: '/images/choice1/c5.png', caption: 'Madagascar' },
+            { src: '/images/choice1/c6.png', caption: 'Canada' },
         ],
         Choice2: [
-            'Where is the picture located?',
-            'What Pokemon in stage 1 do you see here?',
-            'Pikachu was present in the picture. Where was Pikachu looking at?',
-            'Generally, how would you describe the mood of the Pokemon present in the picture?',
+            { src: '/images/choice2/c1.png', caption: 'Marill' },
+            { src: '/images/choice2/c2.png', caption: 'Charizard' },
+            { src: '/images/choice2/c3.png', caption: 'Bellsprout' },
+            { src: '/images/choice2/c4.png', caption: 'Skuntank' },
+            { src: '/images/choice2/c5.png', caption: 'Turtonator' },
+            { src: '/images/choice2/c6.png', caption: 'Glalie' },
         ],
+
         Choice3: [
-            'How many people were in the picture?',
-            'From stage 1, who could you identify in the picture?',
-            'What were the people doing?',
-            'Where is the scene located?',
-            'Was there an animal in the picture? If so, what was it doing?',
+            { src: '/images/choice3/c1.png', caption: 'Architect' },
+            { src: '/images/choice3/c2.png', caption: 'Advocate' },
+            { src: '/images/choice3/c3.png', caption: 'Consul' },
+            { src: '/images/choice3/c4.png', caption: 'Entertainer' },
+            { src: '/images/choice3/c5.png', caption: 'Mediator' },
+            { src: '/images/choice3/c6.png', caption: 'Logistician' },
         ],
     };
-
-    const selectedImage = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1'];
-    const selectedQuestions = questions[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? questions['Choice1'];
-
-    // States
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [showImage, setShowImage] = useState(false); // Show the image
-    const [showQuestions, setShowQuestions] = useState(false); // Show the questions
-    const [showInstructions, setShowInstructions] = useState(false) // Show instructions for Stage 3
-    const [answers, setAnswers] = useState<string[]>(Array(selectedQuestions.length).fill('')); // Store answers
+    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
+    const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
+    const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
 
-    // Handle "Continue" button click in the explanation modal
     const handleContinue = () => {
-        setShowExplanation(false); // Hide the explanation modal
-        setShowImage(true); // Show the image
-
-        // Hide the image and show questions after `showTime` seconds
-        setTimeout(() => {
-            setShowImage(false);
-            setShowQuestions(true);
-        }, showTime * 1000);
+        const confirmed = confirm('Are you ready to proceed to the next phase?');
+        if (confirmed) setMemorizing(false); // Proceed to the answering phase
     };
 
-    const handleInputChange = (index: number, value: string) => {
-        const newAnswers = [...answers];
-        newAnswers[index] = value;
-        setAnswers(newAnswers);
-    };
-
-    const handleSubmit = () => {
-        const confirmed = confirm('Are you ready to continue?');
-        if (confirmed) {
-            setShowQuestions(false);
-            setShowInstructions(true);
-            // router.push(`/gameplay?choice=${choice}`); // Navigate to Stage 3
-        }
-    };
+    const handleContinue2 = () => {
+        setShowExplanation(false);
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
@@ -86,13 +55,13 @@ export default function Stage2Page() {
             {showExplanation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 2: Instructions</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
                         <p className="text-gray-700 mb-6">
-                            An image will be shown for {showTime} seconds, before being hidden. You will then use information
-                            from Stage 1 and the picture to answer some questions.
+                            Images along with their names will be shown, and it is your task to memorise them. 
+                            Once memorised, you'll have to use the memorised information to answer questions. 
                         </p>
                         <button
-                            onClick={handleContinue}
+                            onClick={handleContinue2}
                             className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
                         >
                             Continue
@@ -101,58 +70,116 @@ export default function Stage2Page() {
                 </div>
             )}
 
-            {/* Image Display */}
-            {showImage && (
-                <img
-                    src={selectedImage}
-                    alt="Stage 2 Scenario"
-                    className="w-3/5 object-contain mb-6 border rounded-lg shadow-lg"
-                />
-            )}
 
-            {/* Questions and Answer Boxes */}
-            {showQuestions && (
-                <div className="w-full max-w-3xl space-y-6">
-                    <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 2: Comprehension</h1>
-                    {selectedQuestions.map((question, index) => (
-                        <div key={index} className="flex flex-col space-y-2">
-                            <label className="text-lg font-semibold text-gray-800">{question}</label>
-                            <input
-                                type="text"
-                                value={answers[index]}
-                                onChange={(e) => handleInputChange(index, e.target.value)}
-                                className="px-4 py-2 border rounded-lg shadow-sm text-gray-800"
-                                placeholder="Enter your answer"
+            <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 1: Memorize</h1>
+            {memorizing && (
+                <div className="grid grid-cols-3 gap-10 mb-10">
+                    {choiceImages.map((img, index) => (
+                        <div key={index} className="flex flex-col items-center w-48 h-48">
+                            <img
+                                src={img.src}
+                                alt={img.caption}
+                                className="w-50 h-48 object-contain border border-lg-800 shadow-lg"
                             />
+                            <p className="text-m text-gray-800 mt-2">{img.caption}</p>
                         </div>
                     ))}
-                    <button
-                        onClick={handleSubmit}
-                        className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                    >
-                        Submit
-                    </button>
                 </div>
             )}
 
-            {/* Instruction Modal for Stage 3 */}
-            {showInstructions && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
-                        <p className="text-gray-700 mb-6">
-                            Cards consisting of images you've memorised will be shown for a set amount of time, before being flipped over.
-                            You have to match as many pairs as possible before time runs out.
-                        </p>
-                        <button
-                            onClick={() => router.push(`/gameplay?choice=${choice}`)}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                        >
-                            Continue
-                        </button>
-                    </div>
-                </div>
+            {memorizing ? (
+                <button
+                    onClick={handleContinue}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
+                >
+                    Continue
+                </button>
+            ) : (
+                <AnsweringPhase
+                    images={choiceImages}
+                    onBack={() => setMemorizing(true)} // Go back to memorization phase
+                    onComplete={() => router.push(`/stage3?choice=${choice}`)} // Navigate to Stage 2
+                />
             )}
         </div>
     );
+
+    interface Image {
+        src: string;
+        caption: string;
+    }
+
+    interface AnsweringPhaseProps {
+        images: Image[];
+        onBack: () => void;
+        onComplete: () => void;
+    }
+
+    function AnsweringPhase({ images, onBack, onComplete }: AnsweringPhaseProps) {
+        // Shuffle images once during the answering phase
+        const [shuffledImages] = useState(() =>
+            images
+                .slice()
+                .sort(() => Math.random() - 0.5) // Shuffle the array
+        );
+
+        const [answers, setAnswers] = useState(Array(images.length).fill('')); // Store player answers
+
+        const handleChange = (index: number, value: string) => {
+            const newAnswers = [...answers];
+            newAnswers[index] = value;
+            setAnswers(newAnswers);
+        };
+
+        const isCorrect = answers.every((answer, index) =>
+            answer.toLowerCase() === shuffledImages[index].caption.toLowerCase()
+        );
+
+        const handleComplete = () => {
+            if (!isCorrect) {
+                alert('There are some incorrect answers, please try again.');
+            } else {
+                onComplete();
+            }
+        };
+
+        const handleBack = () => {
+            const confirmed = confirm('Are you sure? All progress would be lost.');
+            if (confirmed) onBack();
+        };
+
+        return (
+            <div>
+                <h2 className="text-xl font-bold mb-4 text-black">Answer the Names</h2>
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                    {shuffledImages.map((img, index) => (
+                        <div key={index} className="flex flex-col items-center">
+                            <img src={img.src} alt={`Image ${index + 1}`} className="w-48 h-48 object-contain" />
+                            <input
+                                type="text"
+                                value={answers[index]}
+                                onChange={(e) => handleChange(index, e.target.value)}
+                                className="mt-2 px-3 py-2 border rounded shadow text-black"
+                                placeholder="Enter name"
+                            />
+                        </div>
+                    ))}
+                </div>
+                <div className="flex space-x-4">
+                    <button
+                        onClick={handleBack}
+                        className="px-6 py-3 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700"
+                    >
+                        Back
+                    </button>
+                    <button
+                        onClick={handleComplete}
+                        className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700"
+                    >
+                        Complete
+                    </button>
+                </div>
+            </div>
+        );
+    }
 }

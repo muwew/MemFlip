@@ -6,13 +6,12 @@ import { initialFlip } from './initialFlip';
 import ExitButton from './exit-button';
 import Card from './card';
 import { CardState, handleCardFlip } from './flipLogic';
-import { Dispatch, SetStateAction } from 'react';
 import Timer from './timer';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { match } from 'assert';
-import { matchesMiddleware } from 'next/dist/shared/lib/router/router';
 
 export default function GameplayPage() {
+  const router = useRouter();
+
   const numPairs = 6; // Number of pairs of cards
   const revealTime = 2000; // Time to reveal all cards at the beginning
   const timeLimit = 15; // Total time in seconds
@@ -86,25 +85,26 @@ export default function GameplayPage() {
   }, [matchedPairs]);
 
   // End game condition
-  const checkEndGame = (reason: string, matchedPairs :number) => {
+  const checkEndGame = (reason: string, matchedPairs :number, router: ReturnType<typeof useRouter>) => {
     setIsGameOver(true);
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
       window.alert(`Congratulations! You matched all pairs in ${timeLimit-timeLeft} seconds.`);
     }
+    router.push(`/stage2?choice=${choice}`)
   };
 
   useEffect(() => {
     if(matchedPairs === numPairs){
-      checkEndGame('win', matchedPairs);
+      checkEndGame('win', matchedPairs, router);
     }
   }, [matchedPairs, numPairs,isGameOver]);
 
   const handleTimeUp = () => {
     if(!isGameOver){
       console.log("Current matches: ", matchedPairsRef.current)
-      checkEndGame('time', matchedPairsRef.current);
+      checkEndGame('time', matchedPairsRef.current, router);
     }
   };
 
