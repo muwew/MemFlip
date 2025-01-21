@@ -127,16 +127,20 @@ export default function Stage2Page() {
         );
 
         const [answers, setAnswers] = useState(Array(images.length).fill('')); // Store player answers
+        const [isCorrectArray, setIsCorrectArray] = useState(Array(images.length).fill(false)); // Track correctness of answers
 
         const handleChange = (index: number, value: string) => {
             const newAnswers = [...answers];
             newAnswers[index] = value;
             setAnswers(newAnswers);
+
+            // Check if the answer is correct
+            const newIsCorrectArray = [...isCorrectArray];
+            newIsCorrectArray[index] = value.toLowerCase() === shuffledImages[index].caption.toLowerCase();
+            setIsCorrectArray(newIsCorrectArray);
         };
 
-        const isCorrect = answers.every((answer, index) =>
-            answer.toLowerCase() === shuffledImages[index].caption.toLowerCase()
-        );
+        const isCorrect = isCorrectArray.every((correct) => correct); // Check if all answers are correct
 
         const handleComplete = () => {
             if (!isCorrect) {
@@ -164,13 +168,20 @@ export default function Stage2Page() {
                     {shuffledImages.map((img, index) => (
                         <div key={index} className="flex flex-col items-center">
                             <img src={img.src} alt={`Image ${index + 1}`} className="w-48 h-48 object-contain" />
-                            <input
-                                type="text"
-                                value={answers[index]}
-                                onChange={(e) => handleChange(index, e.target.value)}
-                                className="mt-2 px-3 py-2 border rounded shadow text-black"
-                                placeholder="Enter name"
-                            />
+                            {/* Input */}
+                            <div className="relative mt-2 w-full flex items-center">
+                                <input
+                                    type="text"
+                                    value={answers[index]}
+                                    onChange={(e) => handleChange(index, e.target.value)}
+                                    className="px-3 py-2 border rounded shadow text-black w-full"
+                                    placeholder="Enter name"
+                                />
+                                {/* Green Tick Indicator */}
+                                {isCorrectArray[index] && (
+                                    <span className="absolute right-2 text-green-600 text-xl font-bold">✓</span>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
