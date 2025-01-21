@@ -92,7 +92,7 @@ export default function GameplayPage() {
     } else if (reason === 'win'){
       window.alert(`Congratulations! You matched all pairs in ${timeLimit-timeLeft} seconds.`);
     }
-    router.push(`/stage2?choice=${choice}`)
+    // router.push(`/stage2?choice=${choice}`)
   };
 
   useEffect(() => {
@@ -155,6 +155,7 @@ export default function GameplayPage() {
             key={index}
             index={index}
             image={choiceImage.src}
+            caption={choiceImage.caption}
             {...cardStates[index]}
             allFlipped={flipAll}
             disabled={disabled}

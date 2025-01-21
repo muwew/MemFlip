@@ -5,6 +5,7 @@ import {useEffect, useState} from 'react';
 export default function Card({
     index,
     image, 
+    caption,
     flipped,
     allFlipped,
     matched,
@@ -14,6 +15,7 @@ export default function Card({
  }: { 
     index: number;
     image: string; 
+    caption: string;
     flipped: boolean;
     allFlipped: boolean;
     matched: boolean;
@@ -65,10 +67,22 @@ export default function Card({
             >
                 {/* Front Side */}
                 <div
-                className="absolute w-full h-full bg-white flex justify-center items-center rounded-lg backface-hidden"
+                className="absolute w-full h-full bg-gray flex flex-col justify-center items-center rounded-lg backface-hidden"
                 style={{ transform: 'rotateY(0deg)' }}
                 >
-                <img src={`${image}`} alt={`Card ${image}`} className="w-40 h-40" />
+                {/* Image */}
+                <div className="relative w-40 h-40 flex items-center justify-center">
+                <img
+                    src={`${image}`}
+                    alt={`Card ${image}`}
+                    className="max-w-full max-h-full object-contain"
+                />
+                </div>
+                
+                {/* Caption */}
+                <p className="mt-2 text-lg font-medium text-gray-700 text-center">
+                    {caption}
+                </p>
                 </div>
         
                 {/* Back Side */}
