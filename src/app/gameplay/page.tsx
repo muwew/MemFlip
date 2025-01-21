@@ -92,7 +92,7 @@ export default function GameplayPage() {
     } else if (reason === 'win'){
       window.alert(`Congratulations! You matched all pairs in ${timeLimit-timeLeft} seconds.`);
     }
-    // router.push(`/stage2?choice=${choice}`)
+    router.push(`/stage2?choice=${choice}`)
   };
 
   useEffect(() => {

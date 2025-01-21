@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function Stage1Page() {
+export default function Stage2Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
@@ -38,6 +38,8 @@ export default function Stage1Page() {
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
+    const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
+    const [stage2Time, setStage2Time] = useState<number | null>(null); // Time spent on stage 2
     const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
 
     const handleContinue = () => {
@@ -47,6 +49,7 @@ export default function Stage1Page() {
 
     const handleContinue2 = () => {
         setShowExplanation(false);
+        setStartTIme(Date.now());
     }
 
     return (
@@ -55,7 +58,7 @@ export default function Stage1Page() {
             {showExplanation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 2: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             Images along with their names will be shown, and it is your task to memorise them. 
                             Once memorised, you'll have to use the memorised information to answer questions. 
@@ -139,6 +142,12 @@ export default function Stage1Page() {
             if (!isCorrect) {
                 alert('There are some incorrect answers, please try again.');
             } else {
+                const endTime = Date.now();
+                if (startTime) {
+                    const timeTaken = (endTime - startTime) / 1000;
+                    setStage2Time(timeTaken);
+                    console.log('Time taken for Stage 2:', timeTaken);
+                }
                 onComplete();
             }
         };
