@@ -2,39 +2,13 @@
 
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import ExitButton from '../gameplay/exit-button';
+import {images} from '../resources/choiceImage';
 
 export default function Stage2Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
-
-    const images = {
-        Choice1: [
-            { src: '/images/choice1/c1.png', caption: 'Tonga' },
-            { src: '/images/choice1/c2.png', caption: 'Somalia' },
-            { src: '/images/choice1/c3.png', caption: 'Bulgaria' },
-            { src: '/images/choice1/c4.png', caption: 'Vietnam' },
-            { src: '/images/choice1/c5.png', caption: 'Madagascar' },
-            { src: '/images/choice1/c6.png', caption: 'Canada' },
-        ],
-        Choice2: [
-            { src: '/images/choice2/c1.png', caption: 'Marill' },
-            { src: '/images/choice2/c2.png', caption: 'Charizard' },
-            { src: '/images/choice2/c3.png', caption: 'Bellsprout' },
-            { src: '/images/choice2/c4.png', caption: 'Skuntank' },
-            { src: '/images/choice2/c5.png', caption: 'Turtonator' },
-            { src: '/images/choice2/c6.png', caption: 'Glalie' },
-        ],
-
-        Choice3: [
-            { src: '/images/choice3/c1.png', caption: 'Architect' },
-            { src: '/images/choice3/c2.png', caption: 'Advocate' },
-            { src: '/images/choice3/c3.png', caption: 'Consul' },
-            { src: '/images/choice3/c4.png', caption: 'Entertainer' },
-            { src: '/images/choice3/c5.png', caption: 'Mediator' },
-            { src: '/images/choice3/c6.png', caption: 'Logistician' },
-        ],
-    };
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
@@ -54,6 +28,15 @@ export default function Stage2Page() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+            {/* Taskbar
+            <header className="flex justify-between items-center bg-gray-300 px-6 py-4 shadow">
+                <div className="flex items-center">
+                    <img src="https://via.placeholder.com/50" alt="MemFlip" className="rounded-full" />
+                    <h1 className="ml-4 text-xl font-bold text-gray-700">MemFlip</h1>
+                </div>
+                <ExitButton />
+            </header> */}
+
             {/* Explanation Modal */}
             {showExplanation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

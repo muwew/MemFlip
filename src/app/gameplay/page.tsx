@@ -8,6 +8,7 @@ import Card from './card';
 import { CardState, handleCardFlip } from './flipLogic';
 import Timer from './timer';
 import { useSearchParams, useRouter } from 'next/navigation';
+import {images} from '../resources/choiceImage';
 
 export default function GameplayPage() {
   const router = useRouter();
@@ -26,36 +27,10 @@ export default function GameplayPage() {
   const [cardStates, setCardStates] = useState<CardState[]>([]);
   const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
 
-  const images = {
-    Choice1: [
-        { src: '/images/choice1/c1.png', caption: 'Tonga' },
-        { src: '/images/choice1/c2.png', caption: 'Somalia' },
-        { src: '/images/choice1/c3.png', caption: 'Bulgaria' },
-        { src: '/images/choice1/c4.png', caption: 'Vietnam' },
-        { src: '/images/choice1/c5.png', caption: 'Madagascar' },
-        { src: '/images/choice1/c6.png', caption: 'Canada' },
-    ],
-    Choice2: [
-        { src: '/images/choice2/c1.png', caption: 'Marill' },
-        { src: '/images/choice2/c2.png', caption: 'Charizard' },
-        { src: '/images/choice2/c3.png', caption: 'Bellsprout' },
-        { src: '/images/choice2/c4.png', caption: 'Skuntank' },
-        { src: '/images/choice2/c5.png', caption: 'Turtonator' },
-        { src: '/images/choice2/c6.png', caption: 'Glalie' },
-    ],
-
-    Choice3: [
-        { src: '/images/choice3/c1.png', caption: 'Architect' },
-        { src: '/images/choice3/c2.png', caption: 'Advocate' },
-        { src: '/images/choice3/c3.png', caption: 'Consul' },
-        { src: '/images/choice3/c4.png', caption: 'Entertainer' },
-        { src: '/images/choice3/c5.png', caption: 'Mediator' },
-        { src: '/images/choice3/c6.png', caption: 'Logistician' },
-    ],
-  };
   const searchParams = useSearchParams();
   const choice = searchParams.get('choice'); // Get the selected choice from query params
   const choiceImages = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1']; 
+  const [stage1Time, setStage1Time] = useState<number | null>(null); // Time spent on stage 1
 
 
   useEffect(() => {
@@ -91,7 +66,9 @@ export default function GameplayPage() {
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
-      window.alert(`Congratulations! You matched all pairs in ${timeLimit-timeLeft} seconds.`);
+      const timeTaken = timeLimit - timeLeft;
+      setStage1Time(timeTaken);
+      window.alert(`Congratulations! You matched all pairs in ${timeTaken} seconds.`);
     }
     router.push(`/stage2?choice=${choice}`)
   };
