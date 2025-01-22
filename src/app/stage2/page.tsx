@@ -74,7 +74,7 @@ export default function Stage2Page() {
             )}
 
 
-            <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 1: Memorize</h1>
+            <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 2: Name recognition</h1>
             {memorizing && (
                 <div className="grid grid-cols-3 gap-10 mb-10">
                     {choiceImages.map((img, index) => (

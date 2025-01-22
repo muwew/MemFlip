@@ -7,7 +7,7 @@ export default function MenuPage() {
   const router = useRouter();
 
   const handleChoice = (choice: string) => {
-    router.push(`/gameplay?choice=${choice}`)
+    router.push(`/instructions?choice=${choice}`)
   };
 
   return (

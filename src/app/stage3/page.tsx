@@ -18,7 +18,7 @@ export default function Stage2Page() {
         Choice3: '/images/choice3/s3.png',
     };
 
-    // Questions for Stage 2 based on choice
+    // Questions for Stage 3 based on choice
     const questions = {
         Choice1: [
             'What time of day is it?',
@@ -86,7 +86,7 @@ export default function Stage2Page() {
             {showExplanation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 2: Instructions</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             An image will be shown for {showTime} seconds, before being hidden. You will then use information
                             from Stage 1 and the picture to answer some questions.
@@ -113,7 +113,7 @@ export default function Stage2Page() {
             {/* Questions and Answer Boxes */}
             {showQuestions && (
                 <div className="w-full max-w-3xl space-y-6">
-                    <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 2: Comprehension</h1>
+                    <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 3: Memorisation</h1>
                     {selectedQuestions.map((question, index) => (
                         <div key={index} className="flex flex-col space-y-2">
                             <label className="text-lg font-semibold text-gray-800">{question}</label>
@@ -135,11 +135,11 @@ export default function Stage2Page() {
                 </div>
             )}
 
-            {/* Instruction Modal for Stage 3 */}
+            {/* Instruction Modal for Stage 1 */}
             {showInstructions && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             Cards consisting of images you've memorised will be shown for a set amount of time, before being flipped over.
                             You have to match as many pairs as possible before time runs out.
