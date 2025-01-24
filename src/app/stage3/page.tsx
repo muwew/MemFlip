@@ -56,9 +56,11 @@ export default function Stage3Page() {
             console.log(score);
             setShowQuestions(false);
             setStage3Score(score);
-            setShowInstructions(true);
-            router.push(`/stage4?choice=${choice}`); // Navigate to Stage 4
         }
+    };
+
+    const handleNext = () => {
+        router.push(`/stage4?choice=${choice}`); // Navigate to Stage 4
     };
 
     const calculateScore = (userAnswers: string[], correctAnswers: string[]) => {
@@ -133,6 +135,19 @@ export default function Stage3Page() {
                         className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
                     >
                         Submit
+                    </button>
+                </div>
+            )}
+
+            {stage3Score !== null && (
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-800">Stage 3 Completed</h2>
+                    <p className="text-lg text-gray-700 mb-4">Your Score: {stage3Score}</p>
+                    <button
+                        onClick={handleNext}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
+                    >
+                        Continue to Next Stage
                     </button>
                 </div>
             )}

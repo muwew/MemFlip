@@ -25,6 +25,7 @@ export default function Stage4Page() {
     const [randomSequence, setRandomSequence] = useState(() => shuffleArray([...selectedImages]));
     const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track the current image being shown
     const [showInstructions, setShowInstructions] = useState(true); // Show instructions modal
+    const [resetCount, setResetCount] = useState(0); // Track the number of times the game is reset
     const [showImages, setShowImages] = useState(false); // Show image sequence
     const [showDragAndDrop, setShowDragAndDrop] = useState(false); // Show drag-and-drop game
     const [dragItems, setDragItems] = useState<(typeof selectedImages[number] | null)[]>([...selectedImages]); // Items for drag-and-drop
@@ -107,6 +108,7 @@ export default function Stage4Page() {
     };
 
     const handleReset = () => {
+        setResetCount((prevCount) => prevCount + 1); // Increment reset count
         setDragItems([...selectedImages]); // Reset dragItems to the original images
         setDroppedItems(Array(selectedImages.length).fill(null)); // Clear all dropped items
     };

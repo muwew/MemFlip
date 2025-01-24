@@ -44,7 +44,7 @@ export default function Stage2Page() {
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 2: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             Images along with their names will be shown, and it is your task to memorise them. 
-                            Once memorised, you'll have to use the memorised information to answer questions. 
+                            Once memorised, you'll have to use the information to answer questions. 
                         </p>
                         <button
                             onClick={handleContinue2}

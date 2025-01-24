@@ -15,6 +15,7 @@ export default function Stage5Page() {
     const imageSrc = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1'];
 
     const gridSize = 3; // 3x3 grid
+    const tileSize = 100 / gridSize; // Percentage size of each tile
     const totalTiles = gridSize * gridSize - 1; // 8 tiles + 1 empty space
 
     const [tiles, setTiles] = useState<(number | null)[]>([]);
@@ -23,11 +24,10 @@ export default function Stage5Page() {
     const [startTime, setStartTime] = useState<number | null>(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completed, setCompleted] = useState(false);
+    const [showInstructions, setShowInstructions] = useState(true);
 
     useEffect(() => {
-        const shuffledTiles = shuffleArray([...Array(totalTiles).keys()]);
-        setTiles([...shuffledTiles, null]); // Add the empty space
-        setStartTime(Date.now());
+        generateSolvablePuzzle();
     }, []);
 
     useEffect(() => {
@@ -42,12 +42,51 @@ export default function Stage5Page() {
         }
     }, [startTime, completed]);
 
-    function shuffleArray(array: number[]) {
+    function shuffleArray(array: number[]): number[] {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+    }
+
+    function countInversions(array: number[]): number {
+        let inversions = 0;
+        for (let i = 0; i < array.length; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i] !== null && array[j] !== null && array[i] > array[j]) {
+                    inversions++;
+                }
+            }
+        }
+        return inversions;
+    }
+
+    function isSolvable(array: (number | null)[]): boolean {
+        const flatTiles = array.filter((tile) => tile !== null) as number[]; // Exclude the empty space
+        const inversions = countInversions(flatTiles);
+
+        if (gridSize % 2 === 1) {
+            // Odd grid size: solvable if inversions are even
+            return inversions % 2 === 0;
+        } else {
+            // Even grid size: consider the empty tile's position
+            const emptyRowFromBottom = gridSize - Math.floor(array.indexOf(null) / gridSize);
+            return (
+                (inversions % 2 === 0 && emptyRowFromBottom % 2 === 1) || // Even inversions + odd row
+                (inversions % 2 === 1 && emptyRowFromBottom % 2 === 0)    // Odd inversions + even row
+            );
+        }
+    }
+
+    function generateSolvablePuzzle() {
+        let shuffledTiles: (number | null)[];
+        do {
+            const tilesArray = shuffleArray([...Array(totalTiles).keys()]);
+            shuffledTiles = [...tilesArray, null]; // Add the empty space
+        } while (!isSolvable(shuffledTiles)); // Ensure the puzzle is solvable
+        setTiles(shuffledTiles);
+        setEmptyIndex(totalTiles);
     }
 
     const handleTileClick = (index: number) => {
@@ -89,14 +128,39 @@ export default function Stage5Page() {
     };
 
     const handleReset = () => {
-        const shuffledTiles = shuffleArray([...Array(totalTiles).keys()]);
-        setTiles([...shuffledTiles, null]);
-        setEmptyIndex(totalTiles);
+        generateSolvablePuzzle();
+        setMoves(0);
+        setElapsedTime(0);
         setCompleted(false);
+        setStartTime(Date.now());
+    };
+
+    const handleContinue = () => {
+        setShowInstructions(false);
+        setStartTime(Date.now());
     };
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+            {/* Instructions Modal */}
+            {showInstructions && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 5: Instructions</h2>
+                        <p className="text-gray-700 mb-6">
+                            In stage 5, an image will be shown in a 3x3 grid with one empty space. 
+                            Your task is to slide the tiles to rearrange them in the correct order.
+                        </p>
+                        <button
+                            onClick={handleContinue}
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
+                        >
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 5: Sliding Tile Puzzle</h1>
             {completed ? (
                 <div className="text-center">
@@ -112,29 +176,34 @@ export default function Stage5Page() {
                 </div>
             ) : (
                 <div>
-                    <div className="grid grid-cols-3 gap-2 w-[300px] h-[300px]">
-                        {tiles.map((tile, index) => (
-                            <div
-                                key={index}
-                                className={`w-full h-full flex items-center justify-center border ${
-                                    tile === null ? 'bg-gray-400' : 'bg-white-200'
-                                } cursor-pointer`}
-                                onClick={() => handleTileClick(index)}
-                                style={
-                                    tile !== null
-                                        ? {
-                                              backgroundImage: `url(${imageSrc})`,
-                                              backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
-                                              backgroundPosition: `${
-                                                  (tile % gridSize) * (100 / (gridSize - 1))
-                                              }% ${(Math.floor(tile / gridSize) * (100 / (gridSize - 1)))}%`,
-                                              width: '100%',
-                                              height: '100%',
-                                          }
-                                        : { width: '100%', height: '100%' }
-                                }
-                            />
-                        ))}
+                    <div className="relative w-[400px] h-[400px] border">
+                        {tiles.map((tile, index) => {
+                            const row = Math.floor(index / gridSize);
+                            const col = index % gridSize;
+
+                            return (
+                                <div
+                                    key={index}
+                                    className={`absolute flex items-center justify-center border bg-gray-200 cursor-pointer transition-transform duration-300 ${
+                                        tile === null ? 'bg-gray-400' : ''
+                                    }`}
+                                    onClick={() => handleTileClick(index)}
+                                    style={{
+                                        width: `${tileSize}%`,
+                                        height: `${tileSize}%`,
+                                        transform: `translate(${col * 100}%, ${row * 100}%)`,
+                                        backgroundImage: tile !== null ? `url(${imageSrc})` : undefined,
+                                        backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
+                                        backgroundPosition:
+                                            tile !== null
+                                                ? `${
+                                                      (tile % gridSize) * (100 / (gridSize - 1))
+                                                  }% ${(Math.floor(tile / gridSize) * (100 / (gridSize - 1)))}%`
+                                                : undefined,
+                                    }}
+                                />
+                            );
+                        })}
                     </div>
                     <p className="text-gray-700 mt-4">Moves: {moves}</p>
                     <p className="text-gray-700">Time: {elapsedTime} seconds</p>
