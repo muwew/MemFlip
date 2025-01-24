@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { answers as answerKey } from './answerKey';
 
-export default function Stage2Page() {
+export default function Stage3Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
@@ -18,40 +19,17 @@ export default function Stage2Page() {
         Choice3: '/images/choice3/s3.png',
     };
 
-    // Questions for Stage 3 based on choice
-    const questions = {
-        Choice1: [
-            'What time of day is it?',
-            'What country flags shown in stage 1 are shown here?',
-            'What do you think the people are doing?',
-            'Are there any people of authority? If yes, what occupations were they?',
-            'Where did the image take place?',
-            'How many people were facing away from the viewer’s perspective?',
-        ],
-        Choice2: [
-            'Where is the picture located?',
-            'What Pokemon in stage 1 do you see here?',
-            'Pikachu was present in the picture. Where was Pikachu looking at?',
-            'Generally, how would you describe the mood of the Pokemon present in the picture?',
-        ],
-        Choice3: [
-            'How many people were in the picture?',
-            'From stage 1, who could you identify in the picture?',
-            'What were the people doing?',
-            'Where is the scene located?',
-            'Was there an animal in the picture? If so, what was it doing?',
-        ],
-    };
-
     const selectedImage = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1'];
-    const selectedQuestions = questions[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? questions['Choice1'];
+    const correctAnswers = answerKey[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? answerKey['Choice1'];
+    const numAnswers = correctAnswers.length; // Number of answers to be filled
+    const [stage3Score, setStage3Score] = useState<number | null>(null);
 
     // States
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [showImage, setShowImage] = useState(false); // Show the image
     const [showQuestions, setShowQuestions] = useState(false); // Show the questions
     const [showInstructions, setShowInstructions] = useState(false) // Show instructions for Stage 3
-    const [answers, setAnswers] = useState<string[]>(Array(selectedQuestions.length).fill('')); // Store answers
+    const [answers, setAnswers] = useState<string[]>(Array(numAnswers).fill('')); // Store user-provigded answers
 
     // Handle "Continue" button click in the explanation modal
     const handleContinue = () => {
@@ -74,11 +52,27 @@ export default function Stage2Page() {
     const handleSubmit = () => {
         const confirmed = confirm('Are you ready to continue?');
         if (confirmed) {
+            const score = calculateScore(answers, correctAnswers);
+            console.log(score);
             setShowQuestions(false);
+            setStage3Score(score);
             setShowInstructions(true);
-            // router.push(`/gameplay?choice=${choice}`); // Navigate to Stage 3
+            router.push(`/stage4?choice=${choice}`); // Navigate to Stage 4
         }
     };
+
+    const calculateScore = (userAnswers: string[], correctAnswers: string[]) => {
+        let score = 0;
+        const normalizedCorrectAnswers = correctAnswers.map(answer => answer.toLowerCase());
+
+        userAnswers.forEach((answer) => {
+            if (normalizedCorrectAnswers.includes(answer.trim().toLowerCase())) {
+                score += 1;
+            }
+        });
+        return score;
+    };
+    
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
@@ -88,9 +82,11 @@ export default function Stage2Page() {
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
                         <p className="text-gray-700 mb-6">
-                            An image will be shown for {showTime} seconds, before being hidden. You will then use information
-                            from Stage 1 and the picture to answer some questions.
+                            An image containing labels will be shown for {showTime} seconds, before being hidden. Your task is to memorise as many of 
+                            the names as possible, and repeat them in a following memorisation task. After you have entered your 
+                            answers to the best of your abilities, you can then submit them to proceed to the next stage.
                         </p>
+
                         <button
                             onClick={handleContinue}
                             className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
@@ -113,18 +109,24 @@ export default function Stage2Page() {
             {/* Questions and Answer Boxes */}
             {showQuestions && (
                 <div className="w-full max-w-3xl space-y-6">
-                    <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 3: Memorisation</h1>
-                    {selectedQuestions.map((question, index) => (
-                        <div key={index} className="flex flex-col space-y-2">
-                            <label className="text-lg font-semibold text-gray-800">{question}</label>
-                            <input
-                                type="text"
-                                value={answers[index]}
-                                onChange={(e) => handleInputChange(index, e.target.value)}
-                                className="px-4 py-2 border rounded-lg shadow-sm text-gray-800"
-                                placeholder="Enter your answer"
-                            />
-                        </div>
+                    <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 3: Mass Memorisation</h1>
+                    <p className="text-gray-700 mb-5 italic">
+                            *The answers need not be in order
+                        </p>
+                    {Array(numAnswers)
+                        .fill(null)
+                        .map((_, index) => (
+                            <div key={index} className="flex flex-col space-y-2">
+                                <label className="text-lg font-semibold text-gray-800">Answer {index + 1}:</label>
+                                <input
+                                    type="text"
+                                    value={answers[index]}
+                                    onChange={(e) => handleInputChange(index, e.target.value)}
+                                    className="px-4 py-2 border rounded-lg shadow-sm text-gray-800"
+                                    placeholder="Enter your answer"
+                                />
+                            </div>
+
                     ))}
                     <button
                         onClick={handleSubmit}
@@ -132,25 +134,6 @@ export default function Stage2Page() {
                     >
                         Submit
                     </button>
-                </div>
-            )}
-
-            {/* Instruction Modal for Stage 1 */}
-            {showInstructions && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
-                        <p className="text-gray-700 mb-6">
-                            Cards consisting of images you've memorised will be shown for a set amount of time, before being flipped over.
-                            You have to match as many pairs as possible before time runs out.
-                        </p>
-                        <button
-                            onClick={() => router.push(`/menu?choice=${choice}`)}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                        >
-                            Continue
-                        </button>
-                    </div>
                 </div>
             )}
         </div>
