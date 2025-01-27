@@ -1,185 +1,168 @@
 'use client';
 
-import { useState } from 'react';
+import {useState, useEffect, useRef } from 'react';
+import { generateGrid } from './generateGrid';
+import { initialFlip } from './initialFlip';
+import ExitButton from './exit-button';
+import Card from './card';
+import { CardState, handleCardFlip } from './flipLogic';
+import Timer from './timer';
 import { useSearchParams, useRouter } from 'next/navigation';
+import {images} from '../resources/choiceImage';
+import {useScore} from '../context/scoreContext';
 
-export default function Stage1Page() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
+export default function GameplayPage() {
+  const router = useRouter();
 
-    const images = {
-        Choice1: [
-            { src: '/images/choice1/c1.png', caption: 'Tonga' },
-            { src: '/images/choice1/c2.png', caption: 'Somalia' },
-            { src: '/images/choice1/c3.png', caption: 'Bulgaria' },
-            { src: '/images/choice1/c4.png', caption: 'Vietnam' },
-            { src: '/images/choice1/c5.png', caption: 'Madagascar' },
-            { src: '/images/choice1/c6.png', caption: 'Canada' },
-        ],
-        Choice2: [
-            { src: '/images/choice2/c1.png', caption: 'Marill' },
-            { src: '/images/choice2/c2.png', caption: 'Charizard' },
-            { src: '/images/choice2/c3.png', caption: 'Bellsprout' },
-            { src: '/images/choice2/c4.png', caption: 'Skuntank' },
-            { src: '/images/choice2/c5.png', caption: 'Turtonator' },
-            { src: '/images/choice2/c6.png', caption: 'Glalie' },
-        ],
+  const numPairs = 6; // Number of pairs of cards
+  const revealTime = 2000; // Time to reveal all cards at the beginning
+  const timeLimit = 15; // Total time in seconds
+  const [showInstructions, setShowInstructions] = useState(true); // Show instructions modal
+  const [matchedPairs, setMatchedPairs] = useState(0); // Initially all cards not matched
+  const [disabled, setDisabled] = useState(false); // Initially all cards not disabled
+  const [isGameOver, setIsGameOver] = useState(false); // Initially game not over
+  const [timeLeft, setTimeLeft] = useState(timeLimit); // Track remaining time
 
-        Choice3: [
-            { src: '/images/choice3/c1.png', caption: 'Architect' },
-            { src: '/images/choice3/c2.png', caption: 'Advocate' },
-            { src: '/images/choice3/c3.png', caption: 'Consul' },
-            { src: '/images/choice3/c4.png', caption: 'Entertainer' },
-            { src: '/images/choice3/c5.png', caption: 'Mediator' },
-            { src: '/images/choice3/c6.png', caption: 'Logistician' },
-        ],
-    };
-    const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
-    const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
-    const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
+  // Generate grid only once when the component mounts
+  const [gridItems, setGridItems] = useState<number[]>([]);
+  const [cardStates, setCardStates] = useState<CardState[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{index: number, image: number}[]>([]);
 
-    const handleContinue = () => {
-        const confirmed = confirm('Are you ready to proceed to the next phase?');
-        if (confirmed) setMemorizing(false); // Proceed to the answering phase
-    };
+  const searchParams = useSearchParams();
+  const choice = searchParams.get('choice'); // Get the selected choice from query params
+  const choiceImages = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1']; 
+  const [stage1Time, setStage1Time] = useState<number | null>(null); // Time spent on stage 1
 
-    const handleContinue2 = () => {
-        setShowExplanation(false);
+
+  useEffect(() => {
+    setGridItems(generateGrid(numPairs));
+  }, [numPairs]);
+
+  // Initialize card states
+  useEffect(() => {
+    setCardStates(gridItems.map(() => ({flipped: false, matched: false, vibrating: false})));
+  }, [gridItems]);
+
+  // Start with cards revealed
+  const[flipAll, setFlipAll] = useState(false);
+  // Call initialFlip when the component mounts
+  initialFlip(revealTime, setFlipAll);
+
+  useEffect(() => {
+    if(flipAll){
+      setCardStates((prevCardStates) =>
+        prevCardStates.map((card) => ({...card, flipped: true}))
+      );
+    }
+  }, [flipAll]);
+
+  const matchedPairsRef = useRef(matchedPairs);
+  useEffect(() => {
+    matchedPairsRef.current = matchedPairs;
+  }, [matchedPairs]);
+
+  // End game condition
+  const {updateScore} = useScore();
+  const checkEndGame = (reason: string, matchedPairs :number, router: ReturnType<typeof useRouter>) => {
+    setIsGameOver(true);
+
+    if(reason === 'time'){
+      window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
+    } else if (reason === 'win'){
+      const timeTaken = timeLimit - timeLeft;
+      setStage1Time(timeTaken);
+      window.alert(`Congratulations! You matched all pairs in ${timeTaken} seconds.`);
     }
 
-    return (
-        <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-            {/* Explanation Modal */}
-            {showExplanation && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 1: Instructions</h2>
-                        <p className="text-gray-700 mb-6">
-                            Images along with their names will be shown, and it is your task to memorise them. 
-                            Once memorised, you'll have to use the memorised information to answer questions. 
-                        </p>
-                        <button
-                            onClick={handleContinue2}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                        >
-                            Continue
-                        </button>
-                    </div>
-                </div>
-            )}
+    // Update score
+    updateScore('stage1', {pairsMatched: matchedPairs, timeTaken: stage1Time});
+
+    // Redirect to next stage
+    router.push(`/stage2?choice=${choice}`)
+  };
+
+  useEffect(() => {
+    if(matchedPairs === numPairs){
+      checkEndGame('win', matchedPairs, router);
+    }
+  }, [matchedPairs, numPairs,isGameOver]);
+
+  const handleTimeUp = () => {
+    if(!isGameOver){
+      console.log("Current matches: ", matchedPairsRef.current)
+      checkEndGame('time', matchedPairsRef.current, router);
+    }
+  };
+
+  const handleTimeUpdate = (remainingTime: number) => {
+    setTimeLeft(remainingTime); // Update `timeLeft` in parent state
+  };
 
 
-            <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 1: Memorize</h1>
-            {memorizing && (
-                <div className="grid grid-cols-3 gap-10 mb-10">
-                    {choiceImages.map((img, index) => (
-                        <div key={index} className="flex flex-col items-center w-48 h-48">
-                            <img
-                                src={img.src}
-                                alt={img.caption}
-                                className="w-50 h-48 object-contain border border-lg-800 shadow-lg"
-                            />
-                            <p className="text-m text-gray-800 mt-2">{img.caption}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {memorizing ? (
-                <button
-                    onClick={handleContinue}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                >
-                    Continue
-                </button>
-            ) : (
-                <AnsweringPhase
-                    images={choiceImages}
-                    onBack={() => setMemorizing(true)} // Go back to memorization phase
-                    onComplete={() => router.push(`/stage2?choice=${choice}`)} // Navigate to Stage 2
-                />
-            )}
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Taskbar */}
+      <header className="flex justify-between items-center bg-gray-300 px-6 py-4 shadow">
+        <div className="flex items-center">
+          <img src="https://via.placeholder.com/50" alt="MemFlip" className="rounded-full" />
+          <h1 className="ml-4 text-xl font-bold text-gray-700">MemFlip</h1>
         </div>
-    );
+        <div className="text-xl font-semibold text-gray-700">Score: {matchedPairs}</div> 
+        <ExitButton />
+      </header>
 
-    interface Image {
-        src: string;
-        caption: string;
-    }
+      {/* Timer */}
+      {!isGameOver && (
+        <Timer timeLimit={timeLimit} 
+        onTimeUp={handleTimeUp} 
+        isGameOver={isGameOver} 
+        onTimeUpdate={handleTimeUpdate}
+        />
+      )}
 
-    interface AnsweringPhaseProps {
-        images: Image[];
-        onBack: () => void;
-        onComplete: () => void;
-    }
+      {/* Gameplay Grid */}
+      <main className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 p-10 place-content-center"
+      style ={{
+        gridTemplateColumns: "repeat(7, minmax(60px, 1fr))",
+        gridTemplateRows: 'repeat(autofill, minmax(60px, 1fr))',
+      }}>
+        {gridItems.map((item, index) => {
+        const imageIndex = item - 1; // Convert one-based to zero-based index
+        const choiceImage = choiceImages[imageIndex]; // Get the corresponding image object
 
-    function AnsweringPhase({ images, onBack, onComplete }: AnsweringPhaseProps) {
-        // Shuffle images once during the answering phase
-        const [shuffledImages] = useState(() =>
-            images
-                .slice()
-                .sort(() => Math.random() - 0.5) // Shuffle the array
-        );
-
-        const [answers, setAnswers] = useState(Array(images.length).fill('')); // Store player answers
-
-        const handleChange = (index: number, value: string) => {
-            const newAnswers = [...answers];
-            newAnswers[index] = value;
-            setAnswers(newAnswers);
-        };
-
-        const isCorrect = answers.every((answer, index) =>
-            answer.toLowerCase() === shuffledImages[index].caption.toLowerCase()
-        );
-
-        const handleComplete = () => {
-            if (!isCorrect) {
-                alert('There are some incorrect answers, please try again.');
-            } else {
-                onComplete();
-            }
-        };
-
-        const handleBack = () => {
-            const confirmed = confirm('Are you sure? All progress would be lost.');
-            if (confirmed) onBack();
-        };
+        // Defensive check to avoid accessing undefined images
+        if (!choiceImage) {
+          console.error(`Image not found for grid item: ${item}`);
+          return null;
+        }
 
         return (
-            <div>
-                <h2 className="text-xl font-bold mb-4 text-black">Answer the Names</h2>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                    {shuffledImages.map((img, index) => (
-                        <div key={index} className="flex flex-col items-center">
-                            <img src={img.src} alt={`Image ${index + 1}`} className="w-48 h-48 object-contain" />
-                            <input
-                                type="text"
-                                value={answers[index]}
-                                onChange={(e) => handleChange(index, e.target.value)}
-                                className="mt-2 px-3 py-2 border rounded shadow text-black"
-                                placeholder="Enter name"
-                            />
-                        </div>
-                    ))}
-                </div>
-                <div className="flex space-x-4">
-                    <button
-                        onClick={handleBack}
-                        className="px-6 py-3 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700"
-                    >
-                        Back
-                    </button>
-                    <button
-                        onClick={handleComplete}
-                        className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700"
-                    >
-                        Complete
-                    </button>
-                </div>
-            </div>
+          <Card
+            key={index}
+            index={index}
+            image={choiceImage.src}
+            caption={choiceImage.caption}
+            {...cardStates[index]}
+            allFlipped={flipAll}
+            disabled={disabled}
+            onFlip={() =>
+              handleCardFlip(
+                index,
+                item, // Pass the actual grid item (not index)
+                flippedCards,
+                setFlippedCards,
+                cardStates,
+                setCardStates,
+                matchedPairs,
+                setMatchedPairs,
+                disabled,
+                setDisabled,
+              )
+            }
+          />
         );
-    }
+      })}
+      </main>
+    </div>
+  );
 }
