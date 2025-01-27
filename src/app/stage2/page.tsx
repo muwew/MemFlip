@@ -13,7 +13,6 @@ export default function Stage2Page() {
     const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
-    const [stage2Time, setStage2Time] = useState<number | null>(null); // Time spent on stage 2
     const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
 
     const handleContinue = () => {
@@ -133,7 +132,6 @@ export default function Stage2Page() {
                 const endTime = Date.now();
                 if (startTime) {
                     const timeTaken = (endTime - startTime) / 1000;
-                    setStage2Time(timeTaken);
                     console.log('Time taken for Stage 2:', timeTaken);
 
                     updateScore('stage2', {timeTaken: timeTaken});

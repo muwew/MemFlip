@@ -31,7 +31,6 @@ export default function GameplayPage() {
   const searchParams = useSearchParams();
   const choice = searchParams.get('choice'); // Get the selected choice from query params
   const choiceImages = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1']; 
-  const [stage1Time, setStage1Time] = useState<number | null>(null); // Time spent on stage 1
 
 
   useEffect(() => {
@@ -66,16 +65,16 @@ export default function GameplayPage() {
   const checkEndGame = (reason: string, matchedPairs :number, router: ReturnType<typeof useRouter>) => {
     setIsGameOver(true);
 
+    const timeTaken = timeLimit - timeLeft;
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
-      const timeTaken = timeLimit - timeLeft;
-      setStage1Time(timeTaken);
+
       window.alert(`Congratulations! You matched all pairs in ${timeTaken} seconds.`);
     }
 
     // Update score
-    updateScore('stage1', {pairsMatched: matchedPairs, timeTaken: stage1Time});
+    updateScore('stage1', {pairsMatched: matchedPairs, timeTaken: timeTaken});
 
     // Redirect to next stage
     router.push(`/stage2?choice=${choice}`)
