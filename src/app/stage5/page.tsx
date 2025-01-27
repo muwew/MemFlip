@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import {useScore} from '../context/scoreContext';
 
 const images = {
     Choice1: '/images/choice1/c7.png',
@@ -25,6 +26,8 @@ export default function Stage5Page() {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completed, setCompleted] = useState(false);
     const [showInstructions, setShowInstructions] = useState(true);
+    const [resets, setResets] = useState(0);
+    const router = useRouter();
 
     useEffect(() => {
         generateSolvablePuzzle();
@@ -129,6 +132,7 @@ export default function Stage5Page() {
 
     const handleReset = () => {
         generateSolvablePuzzle();
+        setResets((prevResets) => prevResets + 1);
         setMoves(0);
         setElapsedTime(0);
         setCompleted(false);
@@ -139,6 +143,13 @@ export default function Stage5Page() {
         setShowInstructions(false);
         setStartTime(Date.now());
     };
+
+    // Navigate to the scoreboard page
+    const {updateScore} = useScore();
+    const handleNext = () => {
+        updateScore('stage5', {timeTaken: elapsedTime, moves: moves, resets: resets});
+        router.push(`/scoreboard?choice=${choice}`);
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
@@ -168,10 +179,10 @@ export default function Stage5Page() {
                     <p className="text-gray-700 mb-2">Time Taken: {elapsedTime} seconds</p>
                     <p className="text-gray-700 mb-4">Moves: {moves}</p>
                     <button
-                        onClick={handleReset}
+                        onClick={handleNext}
                         className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
                     >
-                        Play Again
+                        Continue
                     </button>
                 </div>
             ) : (

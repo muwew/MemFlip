@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { answers as answerKey } from './answerKey';
+import {useScore} from '../context/scoreContext';
 
 export default function Stage3Page() {
     const router = useRouter();
@@ -49,6 +50,7 @@ export default function Stage3Page() {
         setAnswers(newAnswers);
     };
 
+    const {updateScore} = useScore();
     const handleSubmit = () => {
         const confirmed = confirm('Are you ready to continue?');
         if (confirmed) {
@@ -56,6 +58,8 @@ export default function Stage3Page() {
             console.log(score);
             setShowQuestions(false);
             setStage3Score(score);
+
+            updateScore('stage3', {correctAnswers: score});
         }
     };
 

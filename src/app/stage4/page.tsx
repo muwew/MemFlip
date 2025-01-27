@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { images as choiceImages } from '../resources/choiceImage';
+import {useScore} from '../context/scoreContext';
 
 declare global {
     interface Window {
@@ -101,9 +102,13 @@ export default function Stage4Page() {
         e.preventDefault(); // Allow the drop event to occur
     };
 
+    const {updateScore} = useScore();
     const handleSubmit = () => {
         const score = calculateScore(droppedItems, randomSequence);
         setScore(score);
+
+        const percent = (score / selectedImages.length) * 100;
+        updateScore('stage4', {correctPositions: percent});
         setShowDragAndDrop(false);
     };
 

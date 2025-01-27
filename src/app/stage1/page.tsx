@@ -9,6 +9,7 @@ import { CardState, handleCardFlip } from './flipLogic';
 import Timer from './timer';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {images} from '../resources/choiceImage';
+import {useScore} from '../context/scoreContext';
 
 export default function GameplayPage() {
   const router = useRouter();
@@ -61,8 +62,10 @@ export default function GameplayPage() {
   }, [matchedPairs]);
 
   // End game condition
+  const {updateScore} = useScore();
   const checkEndGame = (reason: string, matchedPairs :number, router: ReturnType<typeof useRouter>) => {
     setIsGameOver(true);
+
     if(reason === 'time'){
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
     } else if (reason === 'win'){
@@ -70,6 +73,11 @@ export default function GameplayPage() {
       setStage1Time(timeTaken);
       window.alert(`Congratulations! You matched all pairs in ${timeTaken} seconds.`);
     }
+
+    // Update score
+    updateScore('stage1', {pairsMatched: matchedPairs, timeTaken: stage1Time});
+
+    // Redirect to next stage
     router.push(`/stage2?choice=${choice}`)
   };
 

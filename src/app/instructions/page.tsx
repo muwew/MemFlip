@@ -46,7 +46,7 @@ export default function InstructionsPage() {
                         Your goal is to match as many pairs as possible within the given time limit. 
                     </p>
                     <button
-                        onClick={() => router.push(`/gameplay?choice=${choice}`)}
+                        onClick={() => router.push(`/stage1?choice=${choice}`)}
                         className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
                     >
                         Start Game

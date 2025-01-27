@@ -1,58 +1,51 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useScore } from '../context/scoreContext';
+import { useRouter } from 'next/navigation';
 
 export default function ScoreboardPage() {
+    const { scores } = useScore();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
 
-    const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
+    const handleNext = () => {
+        router.push('/final');
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            {showExplanation && (
-                // Initial Explanation Container
-                <div className="bg-white p-8 rounded-lg shadow-lg max-w-md text-center">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-4">Welcome to MemFlip!</h1>
+        <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+            <h1 className="text-2xl font-bold mb-4 text-gray-800">Overall Scoreboard</h1>
+            <div className="w-full max-w-md text-gray-800">
+                <div className="border-b py-2">
+                    <h2 className="font-semibold text-gray-800">Stage 1</h2>
+                    <p>Time Taken: {scores.stage1?.timeTaken || 'N/A'} seconds</p>
+                    <p>Pairs Matched: {scores.stage1?.pairsMatched || 'N/A'}</p>
+                </div>
+                <div className="border-b py-2">
+                    <h2 className="font-semibold text-gray-800">Stage 2</h2>
+                    <p>Time Taken: {scores.stage2?.timeTaken || 'N/A'} seconds</p>
+                </div>
+                <div className="border-b py-2">
+                    <h2 className="font-semibold text-gray-800">Stage 3</h2>
+                    <p>Correct Answers: {scores.stage3?.correctAnswers || 'N/A'}</p>
+                </div>
+                <div className="border-b py-2">
+                    <h2 className="font-semibold text-gray-800">Stage 4</h2>
+                    <p>Correct Positions: {scores.stage4?.correctPositions || 'N/A'}%</p>
+                </div>
+                <div className="py-2">
+                    <h2 className="font-semibold text-gray-800">Stage 5</h2>
+                    <p>Time Taken: {scores.stage5?.timeTaken || 'N/A'} seconds</p>
+                    <p>Moves: {scores.stage5?.moves || 'N/A'}</p>
+                    <p>Resets: {scores.stage5?.resets || 0}</p>
+                </div>
 
-                    <p className="text-gray-700 mb-6">
-                        In MemFlip, you will be tested on your cognitive ability skills through a series of stages of gameplay. 
-                        Be sure to follow the instructions carefully and raise any questions you may have to the organiser.     
-                    </p>    
-
-                    <button
-                        onClick={() => {
-                            setShowExplanation(false);
-                            setNextPhase(true);
-                        }}
+                <button
+                        onClick={handleNext}
                         className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
                     >
                         Continue
-                    </button>
-                </div>
-            )}
-            
-
-            {nextPhase && (
-                //* Stage 1 Instructions
-                <div className="bg-white p-8 rounded-lg shadow-lg max-w-md text-center">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-4">Stage 1: Instructions</h1>
-
-                    <p className="text-gray-700 mb-6">
-                        In Stage 1, you will be shown cards with images for a brief moment before they are flipped over. 
-                        Your goal is to match as many pairs as possible within the given time limit. 
-                    </p>
-                    <button
-                        onClick={() => router.push(`/gameplay?choice=${choice}`)}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700"
-                    >
-                        Start Game
-                    </button>
-                </div>
-            )}
+                </button>
+            </div>
         </div>
     );
 }

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import ExitButton from '../gameplay/exit-button';
 import {images} from '../resources/choiceImage';
+import {useScore} from '../context/scoreContext';
 
 export default function Stage2Page() {
     const router = useRouter();
@@ -125,6 +125,7 @@ export default function Stage2Page() {
 
         const isCorrect = isCorrectArray.every((correct) => correct); // Check if all answers are correct
 
+        const {updateScore} = useScore();
         const handleComplete = () => {
             if (!isCorrect) {
                 alert('There are some incorrect answers, please try again.');
@@ -134,6 +135,8 @@ export default function Stage2Page() {
                     const timeTaken = (endTime - startTime) / 1000;
                     setStage2Time(timeTaken);
                     console.log('Time taken for Stage 2:', timeTaken);
+
+                    updateScore('stage2', {timeTaken: timeTaken});
                 }
                 onComplete();
             }
