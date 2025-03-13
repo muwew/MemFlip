@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { answers as answerKey } from './answerKey';
 import {useScore} from '../context/scoreContext';
@@ -35,7 +35,6 @@ export default function Stage3Page() {
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [showImage, setShowImage] = useState(false); // Show the image
     const [showQuestions, setShowQuestions] = useState(false); // Show the questions
-    const [showInstructions, setShowInstructions] = useState(false) // Show instructions for Stage 3
     const [answers, setAnswers] = useState<string[]>(Array(numAnswers).fill('')); // Store user-provigded answers
 
     // Handle "Continue" button click in the explanation modal
