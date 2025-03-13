@@ -3,12 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { images as choiceImages } from '../resources/choiceImage';
-import {useScore} from '../context/scoreContext';
+import { useScore } from '../context/scoreContext';
 
 declare global {
     interface Window {
         draggedItemIndex?: number;
     }
+}
+
+// Define a type for the image objects
+interface ImageItem {
+    src: string;
+    caption: string;
 }
 
 export default function Stage4Page() {
@@ -25,22 +31,22 @@ export default function Stage4Page() {
         showImageTime = 1;
     }
 
-    // Get the images based on the choice
-    const selectedImages = choiceImages[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? choiceImages['Choice1'];
+    // Get the images based on the choice, typed as ImageItem[]
+    const selectedImages: ImageItem[] = choiceImages[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? choiceImages['Choice1'];
 
-    // Randomized sequence of images
-    const [randomSequence, setRandomSequence] = useState(() => shuffleArray([...selectedImages]));
+    // Randomized sequence of images, typed as ImageItem[]
+    const [randomSequence, setRandomSequence] = useState<ImageItem[]>(() => shuffleArray([...selectedImages]));
     const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track the current image being shown
     const [showInstructions, setShowInstructions] = useState(true); // Show instructions modal
     const [showImages, setShowImages] = useState(false); // Show image sequence
     const [showDragAndDrop, setShowDragAndDrop] = useState(false); // Show drag-and-drop game
-    const [dragItems, setDragItems] = useState<(typeof selectedImages[number] | null)[]>([...selectedImages]); // Items for drag-and-drop
-    const [droppedItems, setDroppedItems] = useState<(typeof selectedImages[number] | null)[]>(Array(selectedImages.length).fill(null)); // Empty boxes
+    const [dragItems, setDragItems] = useState<(ImageItem | null)[]>([...selectedImages]); // Items for drag-and-drop
+    const [droppedItems, setDroppedItems] = useState<(ImageItem | null)[]>(Array(selectedImages.length).fill(null)); // Empty boxes
 
     const [score, setScore] = useState<number | null>(null); // Player's final score
 
     // Utility to shuffle an array (Fisher-Yates Shuffle)
-    function shuffleArray(array: any[]) {
+    function shuffleArray(array: ImageItem[]): ImageItem[] {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -107,13 +113,13 @@ export default function Stage4Page() {
         e.preventDefault(); // Allow the drop event to occur
     };
 
-    const {updateScore} = useScore();
+    const { updateScore } = useScore();
     const handleSubmit = () => {
         const score = calculateScore(droppedItems, randomSequence);
         setScore(score);
 
         const percent = (score / selectedImages.length) * 100;
-        updateScore('stage4', {correctPositions: percent});
+        updateScore('stage4', { correctPositions: percent });
         setShowDragAndDrop(false);
     };
 
@@ -123,8 +129,8 @@ export default function Stage4Page() {
     };
     
 
-    const calculateScore = (userSequence: any[], correctSequence: any[]) => {
-        console.log(userSequence, correctSequence);
+    // Calculate the score, typed with ImageItem[] for both user and correct sequences
+    const calculateScore = (userSequence: (ImageItem | null)[], correctSequence: ImageItem[]): number => {
         let score = 0;
         for (let i = 0; i < correctSequence.length; i++) {
             if (userSequence[i]?.caption === correctSequence[i].caption) {
@@ -179,9 +185,7 @@ export default function Stage4Page() {
                                 key={index}
                                 draggable
                                 onDragStart={() => handleDragStart(index)}
-                                className={`w-[140px] h-[140px] border rounded-lg flex items-center justify-center ${
-                                    item ? 'bg-gray-200' : 'bg-gray-100'
-                                } shadow-lg cursor-pointer`}
+                                className={`w-[140px] h-[140px] border rounded-lg flex items-center justify-center ${item ? 'bg-gray-200' : 'bg-gray-100'} shadow-lg cursor-pointer`}
                             >
                                 {item && <img src={item.src} alt={item.caption} className="object-contain h-full" />}
                             </div>
@@ -193,9 +197,7 @@ export default function Stage4Page() {
                                 key={index}
                                 onDragOver={handleDragOver}
                                 onDrop={() => handleDrop(index)}
-                                className={`w-[140px] h-[140px] border rounded-lg flex items-center justify-center ${
-                                    item ? 'bg-gray-200' : 'bg-gray-50'
-                                } shadow-lg`}
+                                className={`w-[140px] h-[140px] border rounded-lg flex items-center justify-center ${item ? 'bg-gray-200' : 'bg-gray-50'} shadow-lg`}
                             >
                                 {item && <img src={item.src} alt={item.caption} className="object-contain h-full" />}
                             </div>
