@@ -42,7 +42,7 @@ interface Score {
 // Define the ScoreContextType with updated updateScore type
 interface ScoreContextType {
     scores: Score;
-    updateScore: (stage: keyof Score, data: any) => void; // Still using 'any' for flexibility, can be further refined
+    updateScore: <T extends keyof Score>(stage: T, data: Score[T]) => void; // Use generics to ensure correct data type for each stage
 }
 
 const ScoreContext = createContext<ScoreContextType | undefined>(undefined);
@@ -59,11 +59,7 @@ export const ScoreProvider = ({ children }: { children: React.ReactNode }) => {
         stage5: { timeTaken: 0, moves: 0, resets: 0, conceded: false },
     });
 
-    const updateScore = (stage: keyof Score, data: any) => {
-        // Handling stage4 specific logic to ensure correctPositions is always a float with 2 decimal places
-        if (stage === 'stage4' && 'correctPositions' in data) {
-            data.correctPositions = parseFloat(data.correctPositions.toFixed(2));
-        }
+    const updateScore = <T extends keyof Score>(stage: T, data: Score[T]) => {
         setScores((prev) => ({ ...prev, [stage]: data }));
     };
 

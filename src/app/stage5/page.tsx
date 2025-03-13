@@ -155,7 +155,7 @@ export default function Stage5Page() {
     // Navigate to the scoreboard page
     const {updateScore} = useScore();
     const handleNext = () => {
-        updateScore('stage5', {timeTaken: elapsedTime, moves: moves, resets: resets});
+        updateScore('stage5', {timeTaken: elapsedTime, moves: moves, resets: resets, conceded: false});
         router.push(`/scoreboard?choice=${choice}`);
     }
 
