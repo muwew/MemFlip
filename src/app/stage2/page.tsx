@@ -29,15 +29,6 @@ export default function Stage2Page() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-            {/* Taskbar
-            <header className="flex justify-between items-center bg-gray-300 px-6 py-4 shadow">
-                <div className="flex items-center">
-                    <img src="https://via.placeholder.com/50" alt="MemFlip" className="rounded-full" />
-                    <h1 className="ml-4 text-xl font-bold text-gray-700">MemFlip</h1>
-                </div>
-                <ExitButton />
-            </header> */}
-
             {/* Explanation Modal */}
             {showExplanation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

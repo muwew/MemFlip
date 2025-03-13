@@ -3,6 +3,8 @@
 import { createContext, useContext, useState } from 'react';
 
 interface Score{
+    playerName?: {name: string};
+    matrixNumber?: {mNumber: string};
     mode?:   {gameMode: string};
     stage1?: {timeTaken: number; pairsMatched: number};
     stage2?: {timeTaken: number};
@@ -20,6 +22,8 @@ const ScoreContext = createContext<ScoreContextType | undefined>(undefined);
 
 export const ScoreProvider = ({ children }: { children: React.ReactNode }) => {
     const [scores, setScores] = useState<Score>({
+        playerName: { name: "-" },
+        matrixNumber: { mNumber: "-" },
         mode: { gameMode: "-" },
         stage1: { timeTaken: 0, pairsMatched: 0 },
         stage2: { timeTaken: 0 },

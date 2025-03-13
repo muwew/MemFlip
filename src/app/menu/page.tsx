@@ -9,7 +9,25 @@ export default function MenuPage() {
   const router = useRouter();
   const { updateScore } = useScore(); // Get the updateScore function from context
 
+  // State for name and matriculation number
+  const [name, setName] = useState('');
+  const [mNumber, setMNumber] = useState('');
+  const [submitted, setSubmitted] = useState(false);
   const [gameMode, setGameMode] = useState<string | null>(null);
+
+  // Handle form submission
+  const handleSubmit = () => {
+    if (!name.trim() || !mNumber.trim()) {
+      alert('Please enter both Name and Matriculation Number.');
+      return;
+    }
+
+    // Update the score context with name and matriculation number
+    updateScore('playerName', { name });
+    updateScore('matrixNumber', { mNumber: mNumber });
+
+    setSubmitted(true); // Mark as submitted to show mode selection
+  };
 
   const handleModeSelection = (mode: string) => {
     setGameMode(mode);
@@ -25,7 +43,34 @@ export default function MenuPage() {
     <div className="min-h-screen bg-blue-50 flex flex-col justify-center items-center">
       <h1 className="text-4xl font-bold mb-6 text-blue-800">Welcome to MemFlip!</h1>
 
-      {!gameMode ? (
+      {!submitted ? (
+        // Input fields for Name and Matriculation Number
+        <div className="flex flex-col space-y-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="px-4 py-2 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+          />
+
+          <input
+            type="text"
+            placeholder="Matriculation Number"
+            value={mNumber}
+            onChange={(e) => setMNumber(e.target.value)}
+            className="px-4 py-2 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+          />
+
+          <button
+            onClick={handleSubmit}
+            className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-400"
+          >
+            Submit
+          </button>
+        </div>
+      ) : !gameMode ? (
+        // Mode selection
         <div className="space-y-4">
           <button
             onClick={() => handleModeSelection('easy')}
@@ -42,6 +87,7 @@ export default function MenuPage() {
           </button>
         </div>
       ) : (
+        // Choices after selecting mode
         <div className="space-y-4">
           <p className="text-lg font-semibold text-gray-700 mb-4">
             Selected Mode: <span className="text-blue-600">{gameMode === 'easy' ? 'Mode 1' : 'Mode 2'}</span>

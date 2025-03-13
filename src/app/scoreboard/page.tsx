@@ -16,6 +16,12 @@ export default function ScoreboardPage() {
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Overall Scoreboard</h1>
             <div className="w-full max-w-md text-gray-800">
 
+                <div className="border-b py-2">
+                    <h2 className="font-semibold text-gray-800">Player details</h2>
+                    <p>Name: {scores.playerName?.name}</p>
+                    <p>Matriculation Number: {scores.matrixNumber?.mNumber}</p>
+                </div>
+
                 {/* Display Game Mode */}
                 <div className="border-b py-2">
                     <h2 className="font-semibold text-gray-800">Game Mode</h2>
