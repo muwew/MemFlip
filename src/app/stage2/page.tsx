@@ -2,15 +2,14 @@
 
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import {images} from '../resources/choiceImage';
-import {useScore} from '../context/scoreContext';
+import { images } from '../resources/choiceImage';
+import { useScore } from '../context/scoreContext';
 
 export default function Stage2Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
     const { scores } = useScore();
-    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
@@ -46,7 +45,6 @@ export default function Stage2Page() {
                     </div>
                 </div>
             )}
-
 
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 2: Name recognition</h1>
             {memorizing && (
@@ -116,7 +114,7 @@ export default function Stage2Page() {
 
         const isCorrect = isCorrectArray.every((correct) => correct); // Check if all answers are correct
 
-        const {updateScore} = useScore();
+        const { updateScore } = useScore();
         const handleComplete = () => {
             if (!isCorrect) {
                 alert('There are some incorrect answers, please try again.');
@@ -126,14 +124,14 @@ export default function Stage2Page() {
                     const timeTaken = (endTime - startTime) / 1000;
                     console.log('Time taken for Stage 2:', timeTaken);
 
-                    updateScore('stage2', {timeTaken: timeTaken});
+                    updateScore('stage2', { timeTaken: timeTaken });
                 }
                 onComplete();
             }
         };
 
         const handleBack = () => {
-            const confirmed = confirm('Are you sure? All progress would be lost.');
+            const confirmed = confirm('Are you sure&#39; All progress would be lost.');
             if (confirmed) onBack();
         };
 

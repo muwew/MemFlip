@@ -35,7 +35,6 @@ export default function Stage4Page() {
     const selectedImages: ImageItem[] = choiceImages[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? choiceImages['Choice1'];
 
     // Randomized sequence of images, typed as ImageItem[]
-    const [randomSequence, setRandomSequence] = useState<ImageItem[]>(() => shuffleArray([...selectedImages]));
     const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track the current image being shown
     const [showInstructions, setShowInstructions] = useState(true); // Show instructions modal
     const [showImages, setShowImages] = useState(false); // Show image sequence
@@ -57,10 +56,17 @@ export default function Stage4Page() {
 
     // Show images in sequence one by one
     useEffect(() => {
+        // Shuffle images when component mounts
+        const shuffledSequence = shuffleArray([...selectedImages]);
+
+        // Set the shuffled sequence directly into state
+        setDragItems(shuffledSequence);  // Set shuffled images for drag-and-drop
+        setDroppedItems(Array(shuffledSequence.length).fill(null)); // Clear all dropped items
+
         if (showImages) {
             const timer = setInterval(() => {
                 setCurrentImageIndex((prevIndex) => {
-                    if (prevIndex + 1 >= randomSequence.length) {
+                    if (prevIndex + 1 >= shuffledSequence.length) {
                         clearInterval(timer);
                         setShowImages(false);
                         setShowDragAndDrop(true);
@@ -71,7 +77,7 @@ export default function Stage4Page() {
 
             return () => clearInterval(timer); // Cleanup on unmount
         }
-    }, [showImages, randomSequence.length]);
+    }, [showImages, selectedImages, showImageTime]);
 
     const handleContinue = () => {
         setShowInstructions(false);
@@ -115,7 +121,7 @@ export default function Stage4Page() {
 
     const { updateScore } = useScore();
     const handleSubmit = () => {
-        const score = calculateScore(droppedItems, randomSequence);
+        const score = calculateScore(droppedItems, selectedImages);
         setScore(score);
 
         const percent = (score / selectedImages.length) * 100;
@@ -165,10 +171,10 @@ export default function Stage4Page() {
             )}
 
             {/* Image Sequence Display */}
-            {showImages && currentImageIndex < randomSequence.length && (
+            {showImages && currentImageIndex < selectedImages.length && (
                 <div className="flex items-center justify-center w-full h-64">
                     <img
-                        src={randomSequence[currentImageIndex].src}
+                        src={selectedImages[currentImageIndex].src}
                         alt={`Image ${currentImageIndex + 1}`}
                         className="object-contain w-1/2 h-full"
                     />

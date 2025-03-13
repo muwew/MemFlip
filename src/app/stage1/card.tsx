@@ -1,9 +1,9 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Card({
-    image, 
+    image,
     caption,
     flipped,
     allFlipped,
@@ -11,8 +11,8 @@ export default function Card({
     disabled,
     vibrating,
     onFlip,
- }: { 
-    image: string; 
+}: {
+    image: string;
     caption: string;
     flipped: boolean;
     allFlipped: boolean;
@@ -20,32 +20,25 @@ export default function Card({
     disabled: boolean;
     vibrating: boolean;
     onFlip: () => void;
- }) {
+}) {
     // State to keep track of whether the card is flipped
     const [isFlipped, setIsFlipped] = useState(flipped);
-    // State to keep track of whether the card is vibrating
-    const [isVibrating, setIsVibrating] = useState(vibrating);
 
     // Update isFlipped when the card is flipped
     useEffect(() => {
         setIsFlipped(flipped);
     }, [flipped]);
 
-    // Update isVibrating when the card is vibrating
-    useEffect(() => {
-        setIsVibrating(vibrating);
-    }, [vibrating]);
-
     // Handle initial flip
     useEffect(() => {
-        if(allFlipped){
+        if (allFlipped) {
             setIsFlipped(true);
         }
     }, [allFlipped]);
 
     const handleFlip = () => {
         console.log('isFlipped', isFlipped, 'matched', matched);
-        if(isFlipped && !matched && !disabled){
+        if (isFlipped && !matched && !disabled) {
             console.log('Card flipped');
             onFlip();
         }
@@ -53,44 +46,44 @@ export default function Card({
 
     return (
         <div
-        className={`relative w-60 h-60 perspective 
-            ${vibrating ? 'animate-vibrate' : ''}`}
-          onClick={handleFlip}
+            className={`relative w-60 h-60 perspective 
+            ${vibrating ? 'animate-vibrate' : ''}`} // Use vibrating prop here
+            onClick={handleFlip}
         >
             <div
                 className={`absolute w-full h-full rounded-lg shadow-lg transform transition-transform duration-500 ${
-                isFlipped ? 'rotate-y-180' : ''
+                    isFlipped ? 'rotate-y-180' : ''
                 }`}
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 {/* Front Side */}
                 <div
-                className="absolute w-full h-full bg-gray flex flex-col justify-center items-center rounded-lg backface-hidden"
-                style={{ transform: 'rotateY(0deg)' }}
+                    className="absolute w-full h-full bg-gray flex flex-col justify-center items-center rounded-lg backface-hidden"
+                    style={{ transform: 'rotateY(0deg)' }}
                 >
-                {/* Image */}
-                <div className="relative w-40 h-40 flex items-center justify-center">
-                <img
-                    src={`${image}`}
-                    alt={`Card ${image}`}
-                    className="max-w-full max-h-full object-contain"
-                />
+                    {/* Image */}
+                    <div className="relative w-40 h-40 flex items-center justify-center">
+                        <img
+                            src={`${image}`}
+                            alt={`Card ${image}`}
+                            className="max-w-full max-h-full object-contain"
+                        />
+                    </div>
+
+                    {/* Caption */}
+                    <p className="mt-2 text-lg font-medium text-gray-700 text-center">
+                        {caption}
+                    </p>
                 </div>
-                
-                {/* Caption */}
-                <p className="mt-2 text-lg font-medium text-gray-700 text-center">
-                    {caption}
-                </p>
-                </div>
-        
+
                 {/* Back Side */}
                 <div
-                className="absolute w-full h-full bg-gray-300 flex justify-center items-center rounded-lg backface-hidden"
-                style={{ transform: 'rotateY(180deg)' }}
+                    className="absolute w-full h-full bg-gray-300 flex justify-center items-center rounded-lg backface-hidden"
+                    style={{ transform: 'rotateY(180deg)' }}
                 >
-                <span className="text-2xl font-bold text-gray-700">?</span>
+                    <span className="text-2xl font-bold text-gray-700">?</span>
                 </div>
             </div>
         </div>
-      );
+    );
 }
