@@ -9,7 +9,6 @@ export default function Stage2Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
-    const { scores } = useScore();
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
@@ -131,7 +130,7 @@ export default function Stage2Page() {
         };
 
         const handleBack = () => {
-            const confirmed = confirm('Are you sure&#39; All progress would be lost.');
+            const confirmed = confirm('Are you sure?; All progress would be lost.');
             if (confirmed) onBack();
         };
 
