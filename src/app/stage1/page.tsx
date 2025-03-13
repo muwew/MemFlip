@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { generateGrid } from './generateGrid';
 import { useInitialFlip } from './useInitialFlip';
 import ExitButton from './exit-button';
@@ -11,7 +11,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { images } from '../resources/choiceImage';
 import { useScore } from '../context/scoreContext';
 
-export default function GameplayPage() {
+function Stage1Contents() {
   const router = useRouter();
 
   const numPairs = 6; // Number of pairs of cards
@@ -175,4 +175,12 @@ export default function GameplayPage() {
       </main>
     </div>
   );
+}
+
+export default function GameplayPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < Stage1Contents/>
+        </Suspense>
+    );
 }

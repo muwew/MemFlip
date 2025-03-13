@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { images } from '../resources/choiceImage';
 import { useScore } from '../context/scoreContext';
 
-export default function Stage2Page() {
+function Stage2Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
@@ -176,4 +176,12 @@ export default function Stage2Page() {
             </div>
         );
     }
+}
+
+export default function Stage2Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < Stage2Contents/>
+        </Suspense>
+    );
 }

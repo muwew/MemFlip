@@ -2,8 +2,9 @@
 
 import { useScore } from '../context/scoreContext';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function ScoreboardPage() {
+function ScoreboardContents() {
     const { scores } = useScore();
     const router = useRouter();
 
@@ -61,5 +62,13 @@ export default function ScoreboardPage() {
                 </button>
             </div>
         </div>
+    );
+}
+
+export default function ScoreboardPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < ScoreboardContents/>
+        </Suspense>
     );
 }

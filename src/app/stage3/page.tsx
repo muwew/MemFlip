@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { answers as answerKey } from './answerKey';
 import {useScore} from '../context/scoreContext';
 
-export default function Stage3Page() {
+function Stage3Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
@@ -74,15 +74,20 @@ export default function Stage3Page() {
 
     const calculateScore = (userAnswers: string[], correctAnswers: string[]) => {
         let score = 0;
-        const normalizedCorrectAnswers = correctAnswers.map(answer => answer.toLowerCase());
-
+        const normalizedCorrectAnswers = new Set(correctAnswers.map(answer => answer.toLowerCase())); 
+        const usedAnswers = new Set(); // Track used correct answers
+    
         userAnswers.forEach((answer) => {
-            if (normalizedCorrectAnswers.includes(answer.trim().toLowerCase())) {
+            const normalizedAnswer = answer.trim().toLowerCase();
+            if (normalizedCorrectAnswers.has(normalizedAnswer) && !usedAnswers.has(normalizedAnswer)) {
                 score += 1;
+                usedAnswers.add(normalizedAnswer); // Mark this answer as used
             }
         });
+    
         return score;
     };
+    
     
 
     return (
@@ -161,5 +166,13 @@ export default function Stage3Page() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function Stage3Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < Stage3Contents/>
+        </Suspense>
     );
 }

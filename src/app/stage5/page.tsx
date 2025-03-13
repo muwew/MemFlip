@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {useScore} from '../context/scoreContext';
 
@@ -10,7 +10,7 @@ const images = {
     Choice3: '/images/choice3/c7.png',
 };
 
-export default function Stage5Page() {
+function Stage5Contents() {
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice');
     const { scores } = useScore();
@@ -255,5 +255,13 @@ export default function Stage5Page() {
                     </div>
             )}
         </div>
+    );
+}
+
+export default function Stage5Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < Stage5Contents/>
+        </Suspense>
     );
 }

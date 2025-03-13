@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { images as choiceImages } from '../resources/choiceImage';
 import { useScore } from '../context/scoreContext';
@@ -16,8 +16,7 @@ interface ImageItem {
     src: string;
     caption: string;
 }
-
-export default function Stage4Page() {
+function Stage4Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
@@ -240,5 +239,13 @@ export default function Stage4Page() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function Stage4Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            < Stage4Contents/>
+        </Suspense>
     );
 }
