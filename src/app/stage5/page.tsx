@@ -13,9 +13,17 @@ const images = {
 export default function Stage5Page() {
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice');
+    const { scores } = useScore();
+    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
     const imageSrc = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1'];
 
-    const gridSize = 3; // 3x3 grid
+    // Default grid size: easy mode
+    let gridSize = 3; // 3x3 grid
+
+    if (gameMode === 'hard') {
+        gridSize = 4; // 4x4 grid
+    }
+
     const tileSize = 100 / gridSize; // Percentage size of each tile
     const totalTiles = gridSize * gridSize - 1; // 8 tiles + 1 empty space
 
@@ -155,11 +163,11 @@ export default function Stage5Page() {
         <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
             {/* Instructions Modal */}
             {showInstructions && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center relative">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 5: Instructions</h2>
                         <p className="text-gray-700 mb-6">
-                            In stage 5, an image will be shown in a 3x3 grid with one empty space. 
+                            In stage 5, an image will be shown in a {gridSize}x{gridSize} grid with one empty space. 
                             Your task is to slide the tiles to rearrange them in the correct order.
                         </p>
                         <button
@@ -187,7 +195,7 @@ export default function Stage5Page() {
                 </div>
             ) : (
                 <div>
-                    <div className="relative w-[400px] h-[400px] border">
+                    <div className="relative w-[500px] h-[500px] border">
                         {tiles.map((tile, index) => {
                             const row = Math.floor(index / gridSize);
                             const col = index % gridSize;
@@ -212,7 +220,14 @@ export default function Stage5Page() {
                                                   }% ${(Math.floor(tile / gridSize) * (100 / (gridSize - 1)))}%`
                                                 : undefined,
                                     }}
-                                />
+                                >
+                                    {/* Number label in the top-right corner */}
+                                    {tile !== null && (
+                                        <div className="absolute top-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+                                            {tile + 1}
+                                        </div>
+                                    )}
+                                </div>
                             );
                         })}
                     </div>
@@ -224,7 +239,20 @@ export default function Stage5Page() {
                     >
                         Reset
                     </button>
-                </div>
+
+                    <button
+
+                    onClick={() => {
+                        if (window.confirm("Are you sure you want to concede? This will be marked as the puzzle not being completed. However, this won't affect your study results.")) {
+                            updateScore('stage5', { timeTaken: elapsedTime, moves: moves, resets: resets, conceded: true });
+                            router.push(`/scoreboard?choice=${choice}`);
+                        }
+                    }}
+                    className="mt-4 ml-2 px-6 py-3 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700"
+                    >
+                        Concede
+                    </button>
+                    </div>
             )}
         </div>
     );

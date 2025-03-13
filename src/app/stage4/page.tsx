@@ -15,9 +15,15 @@ export default function Stage4Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const { scores } = useScore();
+    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
 
-    // Time each image is displayed
-    const showImageTime = 1.5; // in seconds
+    // Default time each image is displayed: easy mode
+    let showImageTime = 1.5; // in seconds
+
+    if (gameMode === 'hard') {
+        showImageTime = 1;
+    }
 
     // Get the images based on the choice
     const selectedImages = choiceImages[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? choiceImages['Choice1'];
@@ -142,7 +148,7 @@ export default function Stage4Page() {
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 4: Instructions</h2>
                         <p className="text-gray-700 mb-6">
-                            In stage 4, images will be shown in sequence. You are to memorise the image sequence and reproduce it as the answer.
+                            In stage 4, images will be shown in sequence. You are to memorise the image sequence and reproduce it as the answer by dragging and dropping the images.
                         </p>
                         <button
                             onClick={handleContinue}

@@ -9,9 +9,15 @@ export default function Stage3Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const { scores } = useScore();
+    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
 
-    // Time in seconds to display the image
-    const showTime = 5;
+    // Default time in seconds to display the image: easy mode
+    let showTime = 30;
+
+    if (gameMode === 'hard') {
+        showTime = 20;
+    }
 
     // Images for Stage 2 based on choice
     const images = {
@@ -108,7 +114,7 @@ export default function Stage3Page() {
                 <img
                     src={selectedImage}
                     alt="Stage 2 Scenario"
-                    className="w-3/5 object-contain mb-6 border rounded-lg shadow-lg"
+                    className="w-2/5 object-contain mb-6 border rounded-lg shadow-lg"
                 />
             )}
 

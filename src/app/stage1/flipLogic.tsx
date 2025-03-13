@@ -4,64 +4,60 @@ export interface CardState{
     matched: boolean;
 }
 
-export const handleCardFlip =(
+export const handleCardFlip = (
     index: number,
     image: number,
-    flippedCards: {index: number, image: number}[],
-    setFlippedCards: React.Dispatch<React.SetStateAction<{index: number, image: number}[]>>,
+    flippedCards: { index: number; image: number }[],
+    setFlippedCards: React.Dispatch<React.SetStateAction<{ index: number; image: number }[]>>,
     cardStates: CardState[],
     setCardStates: React.Dispatch<React.SetStateAction<CardState[]>>,
     matchedPairs: number,
     setMatchedPairs: React.Dispatch<React.SetStateAction<number>>,
     disabled: boolean,
-    setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+    if (disabled) return; // Prevent clicking while disabled
+
     const newCardStates = [...cardStates];
-    newCardStates[index].flipped = false; // flip the card
+    newCardStates[index].flipped = false;
     setCardStates(newCardStates);
 
-    // Add flipped card to flippedCards array
-    const newFlippedCards = [...flippedCards, {index, image}];
+    const newFlippedCards = [...flippedCards, { index, image }];
     setFlippedCards(newFlippedCards);
 
-    if(newFlippedCards.length === 2){
-        const newCardStates = [...cardStates];
+    if (newFlippedCards.length === 2) {
         const [firstCard, secondCard] = newFlippedCards;
 
-        // if the two flipped cards match
-        if(firstCard.image === secondCard.image){
+        if (firstCard.image === secondCard.image) {
             newCardStates[firstCard.index].matched = true;
             newCardStates[secondCard.index].matched = true;
-
             setCardStates(newCardStates);
-            const updatePairs = matchedPairs + 1;
-            setMatchedPairs((prev) => {
-                const updatedMatchedPairs = prev + 1;
-                // console.log(`Matched pairs: ${updatedMatchedPairs}`);
-                return updatedMatchedPairs;
-            });
-        }
+            setMatchedPairs((prev) => prev + 1);
+        } else {
+            setDisabled(true);
 
-        // if the two flipped cards do not match
-        else{
-            setDisabled(true); // disable all cards
             newCardStates[firstCard.index].vibrating = true;
             newCardStates[secondCard.index].vibrating = true;
-            setCardStates(newCardStates);
-            // flip them back after a delay (1000ms)
+            setCardStates([...newCardStates]);
+
             setTimeout(() => {
-                newCardStates[firstCard.index].flipped = true;
-                newCardStates[secondCard.index].flipped = true;
+                requestAnimationFrame(() => {
+                    setCardStates((prevState) => {
+                        const updatedStates = [...prevState];
+                        updatedStates[firstCard.index].flipped = true;
+                        updatedStates[secondCard.index].flipped = true;
+                        updatedStates[firstCard.index].vibrating = false;
+                        updatedStates[secondCard.index].vibrating = false;
+                        return updatedStates;
+                    });
 
-                newCardStates[firstCard.index].vibrating = false;
-                newCardStates[secondCard.index].vibrating = false;
-
-                setCardStates(newCardStates);
-                setDisabled(false); // enable all cards
-            }, 1000);
+                    setTimeout(() => {
+                        setDisabled(false);
+                    }, 100); // Keep this delay small to prevent UI lag
+                });
+            }, 800); // Slightly reduce the delay to 800ms for smoother UX
         }
 
-        // Reset flipped cards
         setFlippedCards([]);
     }
-}
+};

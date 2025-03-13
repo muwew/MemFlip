@@ -3,11 +3,12 @@
 import { createContext, useContext, useState } from 'react';
 
 interface Score{
+    mode?:   {gameMode: string};
     stage1?: {timeTaken: number; pairsMatched: number};
     stage2?: {timeTaken: number};
     stage3?: {correctAnswers: number};
     stage4?: {correctPositions: number};
-    stage5?: {timeTaken: number; moves: number; resets: number};
+    stage5?: {timeTaken: number; moves: number; resets: number; conceded: boolean};
 }
 
 interface ScoreContextType {
@@ -18,7 +19,15 @@ interface ScoreContextType {
 const ScoreContext = createContext<ScoreContextType | undefined>(undefined);
 
 export const ScoreProvider = ({ children }: { children: React.ReactNode }) => {
-    const [scores, setScores] = useState<Score>({});
+    const [scores, setScores] = useState<Score>({
+        mode: { gameMode: "-" },
+        stage1: { timeTaken: 0, pairsMatched: 0 },
+        stage2: { timeTaken: 0 },
+        stage3: { correctAnswers: 0 },
+        stage4: { correctPositions: 0 },
+        stage5: { timeTaken: 0, moves: 0, resets: 0 , conceded: false},
+
+    });
 
     const updateScore = (stage: keyof Score, data: any) => {
         if (stage === 'stage4' && data.correctPositions !== undefined) {

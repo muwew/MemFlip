@@ -9,6 +9,8 @@ export default function Stage2Page() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const { scores } = useScore();
+    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
