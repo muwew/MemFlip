@@ -150,7 +150,6 @@ export default function GameplayPage() {
           return (
             <Card
               key={index}
-              index={index}
               image={choiceImage.src}
               caption={choiceImage.caption}
               {...cardStates[index]}

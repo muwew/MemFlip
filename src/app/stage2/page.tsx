@@ -12,7 +12,6 @@ export default function Stage2Page() {
     const { scores } = useScore();
     const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
     const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
     const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice

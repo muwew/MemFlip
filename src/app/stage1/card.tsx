@@ -3,7 +3,6 @@
 import {useEffect, useState} from 'react';
 
 export default function Card({
-    index,
     image, 
     caption,
     flipped,
@@ -13,7 +12,6 @@ export default function Card({
     vibrating,
     onFlip,
  }: { 
-    index: number;
     image: string; 
     caption: string;
     flipped: boolean;
