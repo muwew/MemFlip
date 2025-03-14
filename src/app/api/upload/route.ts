@@ -25,7 +25,8 @@ type StageScore =
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { participantId, stageScores } = body;
+    console.log('Received data:', body);
+    const { participantName ,participantId, stageScores } = body;
 
     if (!participantId || !Array.isArray(stageScores)) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
     const writableStream = fs.createWriteStream(filePath);
     csvStream.pipe(writableStream);
 
+    csvStream.write({ stage: 'Participant', participantName });
     typedScores.forEach((score) => csvStream.write(score));
     csvStream.end();
 
