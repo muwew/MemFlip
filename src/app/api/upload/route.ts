@@ -7,14 +7,23 @@ import { promisify } from 'util';
 
 const unlinkAsync = promisify(fs.unlink);
 
-// Load Google Cloud credentials from environment variable
-const storage = new Storage({
-    credentials: JSON.parse(process.env.GCP_CREDENTIALS!), // Ensure this file is uploaded securely
-});
+let storage: Storage;
+
+// **Check if running in Vercel or local development**
+if (process.env.GCP_CREDENTIALS) {
+  console.log("Using environment variables for Google Cloud credentials");
+  storage = new Storage({
+    credentials: JSON.parse(process.env.GCP_CREDENTIALS!), // Load from Vercel env
+  });
+} else {
+  console.log("Using local JSON file for Google Cloud credentials");
+  storage = new Storage({
+    keyFilename: path.join(process.cwd(), 'memflip-5c4887a10b4c.json'), // Load local file
+  });
+}
 
 const bucketName = process.env.GCS_BUCKET_NAME || 'memory-game-responses';
 
-// Define strict TypeScript types for each stage score format
 type StageScore =
   | { stage: 'Stage1'; timeTaken: number; score: number }
   | { stage: 'Stage2'; timeTaken: number }
@@ -26,16 +35,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     console.log('Received data:', body);
-    const { participantName ,participantId, stageScores } = body;
+    const { participantName, participantId, stageScores } = body;
 
     if (!participantId || !Array.isArray(stageScores)) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
-    // Ensure stageScores is correctly typed
     const typedScores: StageScore[] = stageScores as StageScore[];
-
-    // Generate CSV content
     const filePath = path.join('/tmp', `${participantId}.csv`);
     const csvStream = format({ headers: true });
     const writableStream = fs.createWriteStream(filePath);
@@ -47,13 +53,11 @@ export async function POST(req: NextRequest) {
 
     await new Promise((resolve) => writableStream.on('finish', resolve));
 
-    // Upload CSV to GCS
     await storage.bucket(bucketName).upload(filePath, {
       destination: `responses/${participantId}.csv`,
       contentType: 'text/csv',
     });
 
-    // Clean up local file
     await unlinkAsync(filePath);
 
     return NextResponse.json({ message: 'File uploaded successfully' }, { status: 200 });
@@ -62,7 +66,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-
-export async function GET() {
-    return NextResponse.json({ message: 'This is the upload API. Use POST to submit data.' });
-  }
