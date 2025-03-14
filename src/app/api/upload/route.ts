@@ -14,14 +14,25 @@ const storage = new Storage({
 
 const bucketName = process.env.GCS_BUCKET_NAME || 'memory-game-responses';
 
+// Define strict TypeScript types for each stage score format
+type StageScore =
+  | { stage: 'Stage1'; timeTaken: number; score: number }
+  | { stage: 'Stage2'; timeTaken: number }
+  | { stage: 'Stage3'; correctAnswers: number }
+  | { stage: 'Stage4'; correctPositions: number }
+  | { stage: 'Stage5'; timeTaken: number; moves: number; resets: number };
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { participantId, stageScores } = body;
 
-    if (!participantId || !stageScores) {
+    if (!participantId || !Array.isArray(stageScores)) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
+
+    // Ensure stageScores is correctly typed
+    const typedScores: StageScore[] = stageScores as StageScore[];
 
     // Generate CSV content
     const filePath = path.join('/tmp', `${participantId}.csv`);
@@ -29,7 +40,7 @@ export async function POST(req: NextRequest) {
     const writableStream = fs.createWriteStream(filePath);
     csvStream.pipe(writableStream);
 
-    stageScores.forEach((score: any) => csvStream.write(score));
+    typedScores.forEach((score) => csvStream.write(score));
     csvStream.end();
 
     await new Promise((resolve) => writableStream.on('finish', resolve));
