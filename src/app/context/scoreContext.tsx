@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect} from 'react';
 
 // Define the types for each stage's data
 interface Stage1Data {
@@ -46,6 +46,26 @@ interface ScoreContextType {
 }
 
 const ScoreContext = createContext<ScoreContextType | undefined>(undefined);
+
+const sendScoresToCloud = async (participantId: string, stageScores: any) => {
+    try {
+      await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ participantId, stageScores }),
+      });
+      console.log('Data uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading data:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isGameOver) {
+      sendScoresToCloud(participantId, scores);
+    }
+  }, [isGameOver]);
+
 
 export const ScoreProvider = ({ children }: { children: React.ReactNode }) => {
     const [scores, setScores] = useState<Score>({

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useScore } from '../context/scoreContext';
 import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
@@ -7,6 +8,44 @@ import { Suspense } from 'react';
 function ScoreboardContents() {
     const { scores } = useScore();
     const router = useRouter();
+
+    useEffect(() => {
+        const sendScores = async () => {
+            const participantId = scores.matrixNumber?.mNumber || 'unknown';
+
+            const stageScores = [
+                { stage: 'Stage1', timeTaken: scores.stage1?.timeTaken, score: scores.stage1?.pairsMatched },
+                { stage: 'Stage2', timeTaken: scores.stage2?.timeTaken },
+                { stage: 'Stage3', correctAnswers: scores.stage3?.correctAnswers },
+                { stage: 'Stage4', correctPositions: scores.stage4?.correctPositions },
+                { 
+                    stage: 'Stage5', 
+                    timeTaken: scores.stage5?.timeTaken, 
+                    moves: scores.stage5?.moves, 
+                    resets: scores.stage5?.resets, 
+                    conceded: scores.stage5?.conceded 
+                }
+            ];
+
+            try {
+                const response = await fetch('/api/route', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participantId, stageScores })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to upload scores');
+                } else {
+                    console.log('Scores uploaded successfully');
+                }
+            } catch (error) {
+                console.error('Error sending data:', error);
+            }
+        };
+
+        sendScores();
+    }, [scores]); // Runs when `scores` change
 
     const handleNext = () => {
         router.push('/final');
@@ -23,7 +62,6 @@ function ScoreboardContents() {
                     <p>Matriculation Number: {scores.matrixNumber?.mNumber}</p>
                 </div>
 
-                {/* Display Game Mode */}
                 <div className="border-b py-2">
                     <h2 className="font-semibold text-gray-800">Game Mode</h2>
                     <p>{scores.mode?.gameMode ? (scores.mode.gameMode === 'easy' ? 'Mode 1' : 'Mode 2') : 'N/A'}</p>
@@ -51,7 +89,7 @@ function ScoreboardContents() {
                     <p>Time Taken: {scores.stage5?.timeTaken} seconds</p>
                     <p>Moves: {scores.stage5?.moves}</p>
                     <p>Resets: {scores.stage5?.resets}</p>
-                    <p>Concedes: {scores.stage5?.conceded  ? (scores.stage5?.conceded === true ? 'true' : 'false'): 'false'}</p>
+                    <p>Concedes: {scores.stage5?.conceded ? 'true' : 'false'}</p>
                 </div>
 
                 <button
@@ -68,7 +106,7 @@ function ScoreboardContents() {
 export default function ScoreboardPage() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            < ScoreboardContents/>
+            <ScoreboardContents />
         </Suspense>
     );
 }
