@@ -11,7 +11,7 @@ let storage: Storage;
 
 // **Check if running in Vercel or local development**
 if (process.env.GCP_CREDENTIALS) {
-  console.log("Using environment variables for Google Cloud credentials");
+  console.log("GCP_CREDENTIALS:", process.env.GCP_CREDENTIALS ? "Loaded" : "Not Set");
   storage = new Storage({
     credentials: JSON.parse(process.env.GCP_CREDENTIALS!), // Load from Vercel env
   });
