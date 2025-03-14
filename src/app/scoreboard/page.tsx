@@ -28,7 +28,7 @@ function ScoreboardContents() {
             ];
 
             try {
-                const response = await fetch('/api/route', {
+                const response = await fetch('/api/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ participantId, stageScores })
