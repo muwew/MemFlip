@@ -62,3 +62,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function GET() {
+    return NextResponse.json({ message: 'This is the upload API. Use POST to submit data.' });
+  }
