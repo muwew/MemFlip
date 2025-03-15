@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense} from 'react';
 import { useScore } from '../context/scoreContext';
 import { useRouter } from 'next/navigation';
-import { Suspense } from 'react';
 
 function ScoreboardContents() {
     const { scores } = useScore();
