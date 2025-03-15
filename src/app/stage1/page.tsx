@@ -55,7 +55,6 @@ function Stage1Contents() {
   // Call initialFlip when component mounts
   const { flipAll, isTimerActive } = useInitialFlip(revealTime);
 
-
   useEffect(() => {
     if (flipAll) {
       setCardStates((prevCardStates) =>

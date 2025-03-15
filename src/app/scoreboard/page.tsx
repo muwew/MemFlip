@@ -1,42 +1,12 @@
 'use client';
 
-import { useEffect, Suspense} from 'react';
+import { Suspense} from 'react';
 import { useScore } from '../context/scoreContext';
 import { useRouter } from 'next/navigation';
 
 function ScoreboardContents() {
     const { scores } = useScore();
     const router = useRouter();
-
-    useEffect(() => {
-        const sendScores = async () => {
-            try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        participantName: scores.playerName?.name || 'unknown',
-                        participantId: scores.matrixNumber?.mNumber || 'unknown', 
-                        stageScores: [
-                            { stage: 'Stage1', timeTaken: scores.stage1?.timeTaken, score: scores.stage1?.pairsMatched },
-                            { stage: 'Stage2', timeTaken: scores.stage2?.timeTaken },
-                            { stage: 'Stage3', correctAnswers: scores.stage3?.correctAnswers },
-                            { stage: 'Stage4', correctPositions: scores.stage4?.correctPositions },
-                            { stage: 'Stage5', timeTaken: scores.stage5?.timeTaken, moves: scores.stage5?.moves, resets: scores.stage5?.resets, conceded: scores.stage5?.conceded }
-                        ]
-                    })
-                });
-    
-                if (!response.ok) throw new Error('Failed to upload scores');
-    
-                console.log('Scores uploaded successfully');
-            } catch (error) {
-                console.error('Error sending data:', error);
-            }
-        };
-
-        sendScores();
-    }, [scores]); // Runs when `scores` change
 
     const handleNext = () => {
         router.push('/final');
