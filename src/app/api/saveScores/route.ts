@@ -4,6 +4,11 @@ import { createClient } from '@/utils/supabase/server';
 export async function POST(req: Request) {
     try {
         console.log("Received request to /api/saveScores");
+        
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+            return NextResponse.json({ error: "Supabase env variables are missing" }, { status: 500 });
+        }
+
         // Await the client creation
         const supabase = await createClient();
         if (!supabase) {
