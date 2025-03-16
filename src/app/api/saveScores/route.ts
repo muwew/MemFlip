@@ -6,6 +6,7 @@ export async function POST(req: Request) {
         console.log("Received request to /api/saveScores");
         
         if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+            console.error("Supabase env variables are missing");
             return NextResponse.json({ error: "Supabase env variables are missing" }, { status: 500 });
         }
 
