@@ -1,12 +1,47 @@
 'use client';
 
-import { Suspense} from 'react';
+import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { useScore } from '../context/scoreContext';
 import { useRouter } from 'next/navigation';
 
 function ScoreboardContents() {
     const { scores } = useScore();
     const router = useRouter();
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveMessage, setSaveMessage] = useState('');
+
+    useEffect(() => {
+        const sendScores = async () => {
+            setIsSaving(true);
+            setSaveMessage('');
+
+            try {
+                const response = await fetch('/api/saveScores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(scores),
+                });
+
+                if (response.ok) {
+                    setSaveMessage('Scores saved successfully!');
+                } else {
+                    setSaveMessage('Failed to save scores.');
+                }
+            } catch (error) {
+                console.error('Error saving scores:', error);
+                setSaveMessage('Error occurred while saving.');
+            } finally {
+                setIsSaving(false);
+            }
+        };
+
+        if (scores) {
+            sendScores();
+        }
+    }, [scores]);
 
     const handleNext = () => {
         router.push('/final');
@@ -52,6 +87,12 @@ function ScoreboardContents() {
                     <p>Resets: {scores.stage5?.resets}</p>
                     <p>Concedes: {scores.stage5?.conceded ? 'true' : 'false'}</p>
                 </div>
+
+                {isSaving ? (
+                    <p className="text-gray-600 mt-2">Saving scores...</p>
+                ) : (
+                    <p className="text-green-600 mt-2">{saveMessage}</p>
+                )}
 
                 <button
                     onClick={handleNext}
