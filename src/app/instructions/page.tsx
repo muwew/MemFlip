@@ -39,7 +39,7 @@ function InstructionsContent() {
                     <h1 className="text-2xl font-bold text-gray-800 mb-4">Stage 1: Instructions</h1>
                     <p className="text-gray-700 mb-6">
                         In Stage 1, you will be shown cards with images for a brief moment before they are flipped over. 
-                        Your goal is to match as many pairs as possible within the given time limit. 
+                        Your goal is to match as many identical pairs as possible within the given time limit. 
                     </p>
                     <button
                         onClick={() => router.push(`/stage1?choice=${choice}&mode=${gameMode}`)}

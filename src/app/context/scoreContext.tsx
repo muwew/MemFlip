@@ -32,6 +32,7 @@ interface Score {
     playerName?: { name: string };
     matrixNumber?: { mNumber: string };
     mode?: { gameMode: string };
+    choice?: { gameChoice: string };
     stage1?: Stage1Data;
     stage2?: Stage2Data;
     stage3?: Stage3Data;
@@ -53,6 +54,7 @@ export const ScoreProvider = ({ children }: { children: React.ReactNode }) => {
         playerName: { name: "-" },
         matrixNumber: { mNumber: "-" },
         mode: { gameMode: "-" },
+        choice: { gameChoice: "-" },
         stage1: { timeTaken: 0, pairsMatched: 0 },
         stage2: { timeTaken: 0 },
         stage3: { correctAnswers: 0 },

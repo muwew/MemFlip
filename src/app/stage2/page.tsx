@@ -34,7 +34,7 @@ function Stage2Contents() {
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 2: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             Images along with their names will be shown, and it is your task to memorise them. 
-                            Once memorised, you will have to use the information to answer questions. 
+                            Once memorised, you will label all images with their correct names. 
                         </p>
                         <button
                             onClick={handleContinue2}

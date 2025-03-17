@@ -5,8 +5,8 @@ export async function POST(req: Request) {
     try {
         console.log("Received request to /api/saveScores");
         console.log("🔍 Checking Supabase Env Variables...");
-        console.log("SUPABASE_URL:", process.env.NEXT_PUBLIC_SUPABASE_URL || "Not Found");
-        console.log("SUPABASE_ANON_KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "Not Found");
+        console.log("NEXT_PUBLIC_SUPABASE_URL:", process.env.NEXT_PUBLIC_SUPABASE_URL || "Not Found");
+        console.log("NEXT_PUBLIC_SUPABASE_ANON_KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "Not Found");
         
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
             console.error("Supabase env variables are missing");

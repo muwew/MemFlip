@@ -157,7 +157,8 @@ function Stage4Contents() {
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg text-center">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 4: Instructions</h2>
                         <p className="text-gray-700 mb-6">
-                            In stage 4, images will be shown in sequence. You are to memorise the image sequence and reproduce it as the answer by dragging and dropping the images.
+                            In stage 4, images will be shown in sequence. You are to memorise the image sequence and reproduce it as the answer 
+                            by dragging and dropping the images into their correct order.
                         </p>
                         <button
                             onClick={handleContinue}

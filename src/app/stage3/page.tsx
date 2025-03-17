@@ -99,8 +99,7 @@ function Stage3Contents() {
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Stage 3: Instructions</h2>
                         <p className="text-gray-700 mb-6">
                             An image containing labels will be shown for {showTime} seconds, before being hidden. Your task is to memorise as many of 
-                            the names as possible, and repeat them in a following memorisation task. After you have entered your 
-                            answers to the best of your abilities, you can then submit them to proceed to the next stage.
+                            the names as possible, and recall them in the following task. Enter as many names as you can recall and submit to proceed to the next stage.
                         </p>
 
                         <button
@@ -128,6 +127,7 @@ function Stage3Contents() {
                     <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 3: Mass Memorisation</h1>
                     <p className="text-gray-700 mb-5 italic">
                             *The answers need not be in order
+                            *Fill as many answers as you can and submit when ready
                         </p>
                     {Array(numAnswers)
                         .fill(null)

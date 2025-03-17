@@ -13,6 +13,7 @@ export default function MenuPage() {
   const [mNumber, setMNumber] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [gameMode, setGameMode] = useState<string | null>(null);
+  const [gameChoice, setGameChoice] = useState<string | null>(null);
 
   // Handle form submission
   const handleSubmit = () => {
@@ -34,6 +35,8 @@ export default function MenuPage() {
   };
 
   const handleChoice = (choice: string) => {
+    setGameChoice(choice);
+    updateScore('choice', { gameChoice: choice }); // Store choice in the score context
     if (!gameMode) return;
     router.push(`/instructions?choice=${choice}`);
   };

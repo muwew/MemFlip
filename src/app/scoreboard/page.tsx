@@ -61,6 +61,7 @@ function ScoreboardContents() {
                 <div className="border-b py-2">
                     <h2 className="font-semibold text-gray-800">Game Mode</h2>
                     <p>{scores.mode?.gameMode ? (scores.mode.gameMode === 'easy' ? 'Mode 1' : 'Mode 2') : 'N/A'}</p>
+                    <p>{scores.choice?.gameChoice ? (scores.choice.gameChoice) : 'N/A'}</p>
                 </div>
 
                 <div className="border-b py-2">
