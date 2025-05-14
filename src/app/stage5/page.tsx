@@ -14,7 +14,7 @@ function Stage5Contents() {
     const searchParams = useSearchParams();
     const choice = searchParams.get('choice');
     const { scores } = useScore();
-    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
+    const gameMode = scores.mode?.gameMode; 
     const imageSrc = images[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? images['Choice1'];
 
     // Default grid size: easy mode
@@ -25,7 +25,7 @@ function Stage5Contents() {
     }
 
     const tileSize = 100 / gridSize; // Percentage size of each tile
-    const totalTiles = gridSize * gridSize - 1; // 8 tiles + 1 empty space
+    const totalTiles = gridSize * gridSize - 1; // Should b 8 or 15
 
     const [tiles, setTiles] = useState<(number | null)[]>([]);
     const [emptyIndex, setEmptyIndex] = useState<number>(totalTiles); // Bottom-right is empty initially
@@ -73,6 +73,7 @@ function Stage5Contents() {
         return inversions;
     }
 
+    // Check if puzzle is solvable
     function isSolvable(array: (number | null)[]): boolean {
         const flatTiles = array.filter((tile) => tile !== null) as number[]; // Exclude the empty space
         const inversions = countInversions(flatTiles);
@@ -95,7 +96,7 @@ function Stage5Contents() {
         do {
             const tilesArray = shuffleArray([...Array(totalTiles).keys()]);
             shuffledTiles = [...tilesArray, null]; // Add the empty space
-        } while (!isSolvable(shuffledTiles)); // Ensure the puzzle is solvable
+        } while (!isSolvable(shuffledTiles));
         setTiles(shuffledTiles);
         setEmptyIndex(totalTiles);
     }
@@ -152,7 +153,7 @@ function Stage5Contents() {
         setStartTime(Date.now());
     };
 
-    // Navigate to the scoreboard page
+    // Go to the scoreboard page
     const {updateScore} = useScore();
     const handleNext = () => {
         updateScore('stage5', {timeTaken: elapsedTime, moves: moves, resets: resets, conceded: false});

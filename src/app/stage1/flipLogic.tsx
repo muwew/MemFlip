@@ -25,9 +25,11 @@ export const handleCardFlip = (
     const newFlippedCards = [...flippedCards, { index, image }];
     setFlippedCards(newFlippedCards);
 
+    // If two cards are flipped
     if (newFlippedCards.length === 2) {
         const [firstCard, secondCard] = newFlippedCards;
 
+        // If match
         if (firstCard.image === secondCard.image) {
             newCardStates[firstCard.index].matched = true;
             newCardStates[secondCard.index].matched = true;
@@ -40,6 +42,7 @@ export const handleCardFlip = (
             newCardStates[secondCard.index].vibrating = true;
             setCardStates([...newCardStates]);
 
+            // Set timeout to flip back cards
             setTimeout(() => {
                 requestAnimationFrame(() => {
                     setCardStates((prevState) => {
@@ -53,9 +56,9 @@ export const handleCardFlip = (
 
                     setTimeout(() => {
                         setDisabled(false);
-                    }, 100); // Keep this delay small to prevent UI lag
+                    }, 100); // Set delay to appropriate value
                 });
-            }, 800); // Slightly reduce the delay to 800ms for smoother UX
+            }, 800); // Set delay to appropriate value
         }
 
         setFlippedCards([]);

@@ -35,6 +35,7 @@ function Stage1Contents() {
   let revealTime = 2000; // Time to reveal all cards at the beginning
   let timeLimit = 15; // Total time in seconds
 
+  // Adjust variables in hard mode
   if (gameMode === 'hard') {
     revealTime = 2000;
     timeLimit = 10;
@@ -73,9 +74,9 @@ function Stage1Contents() {
   const checkEndGame = (reason: string, matchedPairs: number, router: ReturnType<typeof useRouter>) => {
     setIsGameOver(true);
 
-    const timeTaken = timeLimit - timeLeft; // Calculate time taken
-    console.log("Time left: ", timeLeft);
-    console.log("Time taken: ", timeTaken);
+    const timeTaken = timeLimit - timeLeft;
+    // console.log("Time left: ", timeLeft);
+    // console.log("Time taken: ", timeTaken);
     if (reason === 'time') {
       window.alert(`Time's up! You matched ${matchedPairs} pairs.`);
       // Update score
@@ -137,10 +138,10 @@ function Stage1Contents() {
           gridTemplateRows: 'repeat(autofill, minmax(60px, 1fr))',
         }}>
         {gridItems.map((item, index) => {
-          const imageIndex = item - 1; // Convert one-based to zero-based index
-          const choiceImage = choiceImages[imageIndex]; // Get the corresponding image object
+          const imageIndex = item - 1; 
+          const choiceImage = choiceImages[imageIndex];
 
-          // Defensive check to avoid accessing undefined images
+          // Log error if image not found
           if (!choiceImage) {
             console.error(`Image not found for grid item: ${item}`);
             return null;
@@ -157,7 +158,7 @@ function Stage1Contents() {
               onFlip={() =>
                 handleCardFlip(
                   index,
-                  item, // Pass the actual grid item (not index)
+                  item,
                   flippedCards,
                   setFlippedCards,
                   cardStates,

@@ -19,31 +19,28 @@ interface ImageItem {
 function Stage4Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const choice = searchParams.get('choice'); 
     const { scores } = useScore();
-    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
+    const gameMode = scores.mode?.gameMode; 
 
-    // Default time each image is displayed: easy mode
-    let showImageTime = 1.5; // in seconds
+    // Default time in easy mode
+    let showImageTime = 1.5; 
 
     if (gameMode === 'hard') {
         showImageTime = 1;
     }
 
-    // Get the images based on the choice, typed as ImageItem[]
     const selectedImages: ImageItem[] = choiceImages[choice as 'Choice1' | 'Choice2' | 'Choice3'] ?? choiceImages['Choice1'];
 
-    // Randomized sequence of images, typed as ImageItem[]
-    const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track the current image being shown
-    const [showInstructions, setShowInstructions] = useState(true); // Show instructions modal
-    const [showImages, setShowImages] = useState(false); // Show image sequence
-    const [showDragAndDrop, setShowDragAndDrop] = useState(false); // Show drag-and-drop game
+    const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+    const [showInstructions, setShowInstructions] = useState(true);
+    const [showImages, setShowImages] = useState(false); 
+    const [showDragAndDrop, setShowDragAndDrop] = useState(false); 
     const [dragItems, setDragItems] = useState<(ImageItem | null)[]>([...selectedImages]); // Items for drag-and-drop
     const [droppedItems, setDroppedItems] = useState<(ImageItem | null)[]>(Array(selectedImages.length).fill(null)); // Empty boxes
 
     const [score, setScore] = useState<number | null>(null); // Player's final score
 
-    // Utility to shuffle an array (Fisher-Yates Shuffle)
     function shuffleArray(array: ImageItem[]): ImageItem[] {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -55,10 +52,9 @@ function Stage4Contents() {
 
     // Show images in sequence one by one
     useEffect(() => {
-        // Shuffle images when component mounts
+        // Shuffle images
         const shuffledSequence = shuffleArray([...selectedImages]);
 
-        // Set the shuffled sequence directly into state
         setDragItems(shuffledSequence);  // Set shuffled images for drag-and-drop
         setDroppedItems(Array(shuffledSequence.length).fill(null)); // Clear all dropped items
 
@@ -74,7 +70,7 @@ function Stage4Contents() {
                 });
             }, showImageTime * 1000);
 
-            return () => clearInterval(timer); // Cleanup on unmount
+            return () => clearInterval(timer);
         }
     }, [showImages, selectedImages, showImageTime]);
 
@@ -96,12 +92,12 @@ function Stage4Contents() {
         if (draggedIndex !== undefined && dragItems[draggedIndex]) {
             const draggedItem = dragItems[draggedIndex];
     
-            // Ensure the target box is empty
+            // if target box empty
             if (droppedItems[index] === null) {
                 const newDroppedItems = [...droppedItems];
                 const newDragItems = [...dragItems];
     
-                // Move the item to the droppedItems array
+                // Move item to droppedItems array
                 newDroppedItems[index] = draggedItem;
                 newDragItems[draggedIndex] = null;
     
@@ -129,12 +125,11 @@ function Stage4Contents() {
     };
 
     const handleReset = () => {
-        setDragItems([...selectedImages]); // Reset dragItems to the original images
+        setDragItems([...selectedImages]); // Reset dragItems
         setDroppedItems(Array(selectedImages.length).fill(null)); // Clear all dropped items
     };
     
 
-    // Calculate the score, typed with ImageItem[] for both user and correct sequences
     const calculateScore = (userSequence: (ImageItem | null)[], correctSequence: ImageItem[]): number => {
         let score = 0;
         for (let i = 0; i < correctSequence.length; i++) {

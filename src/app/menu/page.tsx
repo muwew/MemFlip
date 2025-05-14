@@ -6,9 +6,9 @@ import { useScore } from '../context/scoreContext'; // Import the score context
 
 export default function MenuPage() {
   const router = useRouter();
-  const { updateScore } = useScore(); // Get the updateScore function from context
+  const { updateScore } = useScore(); 
 
-  // State for name and matriculation number
+  // Set states
   const [name, setName] = useState('');
   const [mNumber, setMNumber] = useState('');
   const [submitted, setSubmitted] = useState(false);

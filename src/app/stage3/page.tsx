@@ -8,13 +8,14 @@ import {useScore} from '../context/scoreContext';
 function Stage3Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const choice = searchParams.get('choice'); 
     const { scores } = useScore();
-    const gameMode = scores.mode?.gameMode; // Get gameMode directly from the ScoreContext
+    const gameMode = scores.mode?.gameMode; 
 
-    // Default time in seconds to display the image: easy mode
+    // Default time to display the image
     let showTime = 30;
 
+    // Reduce time in hard mode
     if (gameMode === 'hard') {
         showTime = 20;
     }
@@ -32,10 +33,10 @@ function Stage3Contents() {
     const [stage3Score, setStage3Score] = useState<number | null>(null);
 
     // States
-    const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [showImage, setShowImage] = useState(false); // Show the image
-    const [showQuestions, setShowQuestions] = useState(false); // Show the questions
-    const [answers, setAnswers] = useState<string[]>(Array(numAnswers).fill('')); // Store user-provigded answers
+    const [showExplanation, setShowExplanation] = useState(true); 
+    const [showImage, setShowImage] = useState(false); 
+    const [showQuestions, setShowQuestions] = useState(false);
+    const [answers, setAnswers] = useState<string[]>(Array(numAnswers).fill('')); // Store user-provided answers
 
     // Handle "Continue" button click in the explanation modal
     const handleContinue = () => {

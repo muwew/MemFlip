@@ -8,16 +8,16 @@ import { useScore } from '../context/scoreContext';
 function Stage2Contents() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
+    const choice = searchParams.get('choice'); // Get the selected choice
     const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
     const [memorizing, setMemorizing] = useState(true); // Track phase: memorizing or answering
-    const [startTime, setStartTIme] = useState<number | null>(null); // Start time of phase 2
-    const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default to Choice1 if no valid choice
+    const [startTime, setStartTIme] = useState<number | null>(null); 
+    const choiceImages = images[choice as 'Choice1' | 'Choice2'] ?? images['Choice1']; // Default: choice1
 
     const handleContinue = () => {
         const confirmed = confirm("Are you ready to proceed to the next phase?"
         );
-        if (confirmed) setMemorizing(false); // Proceed to the answering phase
+        if (confirmed) setMemorizing(false); // Proceed to answer
     };
 
     const handleContinue2 = () => {
@@ -48,6 +48,7 @@ function Stage2Contents() {
 
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Stage 2: Name recognition</h1>
             {memorizing && (
+                // Show grid of images to memorize
                 <div className="grid grid-cols-3 gap-10 mb-10">
                     {choiceImages.map((img, index) => (
                         <div key={index} className="flex flex-col items-center w-48 h-48">
@@ -95,7 +96,7 @@ function Stage2Contents() {
         const [shuffledImages] = useState(() =>
             images
                 .slice()
-                .sort(() => Math.random() - 0.5) // Shuffle the array
+                .sort(() => Math.random() - 0.5) 
         );
 
         const [answers, setAnswers] = useState(Array(images.length).fill('')); // Store player answers
@@ -161,7 +162,7 @@ function Stage2Contents() {
                 </div>
                 <div className="flex space-x-4">
                     <button
-                        onClick={handleBack}
+                        onClick={handleBack} 
                         className="px-6 py-3 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700"
                     >
                         Back

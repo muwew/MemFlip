@@ -10,7 +10,7 @@ export function useInitialFlip(revealTime: number) {
     const timer = setTimeout(() => {
       setFlipAll(true); // Flip all cards
       setTimeout(() => {
-        setIsTimerActive(true); // Start the timer after a short delay
+        setIsTimerActive(true); // Start the timer after delay (in line with initial flip time)
       }, 200); 
     }, revealTime);
 

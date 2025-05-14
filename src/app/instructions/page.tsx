@@ -6,11 +6,11 @@ import { useState, Suspense } from 'react';
 function InstructionsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const choice = searchParams.get('choice'); // Get the selected choice from query params
-    const gameMode = searchParams.get('mode'); // Get the selected game mode from query params
+    const choice = searchParams.get('choice');
+    const gameMode = searchParams.get('mode');
 
-    const [showExplanation, setShowExplanation] = useState(true); // Show explanation modal
-    const [nextPhase, setNextPhase] = useState(false); // Show next phase modal
+    const [showExplanation, setShowExplanation] = useState(true); 
+    const [nextPhase, setNextPhase] = useState(false); 
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

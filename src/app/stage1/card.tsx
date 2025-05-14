@@ -21,7 +21,6 @@ export default function Card({
     vibrating: boolean;
     onFlip: () => void;
 }) {
-    // State to keep track of whether the card is flipped
     const [isFlipped, setIsFlipped] = useState(flipped);
 
     // Update isFlipped when the card is flipped
@@ -47,7 +46,7 @@ export default function Card({
     return (
         <div
             className={`relative w-60 h-60 perspective 
-            ${vibrating ? 'animate-vibrate' : ''}`} // Use vibrating prop here
+            ${vibrating ? 'animate-vibrate' : ''}`}
             onClick={handleFlip}
         >
             <div
